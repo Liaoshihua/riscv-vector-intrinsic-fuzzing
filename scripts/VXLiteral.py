@@ -16,6 +16,7 @@ vx_literal_nonmask_body = '''
 '''
 
 vx_tu_literal_nonmask_body = '''
+  // scripts/VXLiteral.py vx_tu_literal_nonmask_body
   assert(a->length == b->length && c->length == 1 && a->length == d->length);
 
   auto length = a->length;
@@ -438,9 +439,9 @@ def create_vx_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   ret += vx_literal_start0 + op_type + vx_literal_start1
   for i in range(input_num) :
     var = chr(ord('a') + i)
-    ret += "  auto " + var + " = static_cast<RIF::" + input_types[i] + "Val *>(op->inputs[" + str(i) + "]);\n"
+    ret += "  auto " + var + " = static_cast<RIF::" + input_types[i] + "Val *>(op->inputs[" + str(i) + "]); // scripts/VXLiteral.py create_vx_op \n"
   var = chr(ord('a') + input_num)
-  ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]);\n"
+  ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/VXLiteral.py create_vx_op \n"
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_end
@@ -466,9 +467,9 @@ def create_destructive_vx_op(op_type, op_id, op_attr, output_type, input_num, in
   ret += vx_literal_start0 + op_type + vx_literal_start1
   for i in range(input_num) :
     var = chr(ord('a') + i)
-    ret += "  auto " + var + " = static_cast<RIF::" + input_types[i] + "Val *>(op->inputs[" + str(i) + "]);\n"
+    ret += "  auto " + var + " = static_cast<RIF::" + input_types[i] + "Val *>(op->inputs[" + str(i) + "]); // scripts/VXLiteral.py create_destructive_vx_op \n"
   var = chr(ord('a') + input_num)
-  ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]);\n"
+  ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/VXLiteral.py create_destructive_vx_op \n"
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_mask_destructive_body  + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_destructive_end
@@ -494,9 +495,9 @@ def create_masked_no_maskedoff_vx_op(op_type, op_id, op_attr, output_type, input
   ret += vx_literal_start0 + op_type + vx_literal_start1
   for i in range(input_num) :
     var = chr(ord('a') + i)
-    ret += "  auto " + var + " = static_cast<RIF::" + input_types[i] + "Val *>(op->inputs[" + str(i) + "]);\n"
+    ret += "  auto " + var + " = static_cast<RIF::" + input_types[i] + "Val *>(op->inputs[" + str(i) + "]); // scripts/VXLiteral.py create_masked_no_maskedoff_vx_op \n"
   var = chr(ord('a') + input_num)
-  ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]);\n"
+  ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/VXLiteral.py create_masked_no_maskedoff_vx_op \n"
   if "MaskAgnostic" in op_attr : # ma
     ret += vx_literal_masked_no_maskedoff_body  + include_literal("v" + op_id + ".h")
     if op_type[-3:] == "_MA" : # output is mask(only one bit for each element)
