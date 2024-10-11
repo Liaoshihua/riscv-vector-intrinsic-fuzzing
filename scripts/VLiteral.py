@@ -301,6 +301,8 @@ v_literal_strided_store_mask_end = '''
 '''
 
 def create_v_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
+  if op_id == "fmv_v":
+    op_id = op_id + "_f"
   ret = ""
   ret += v_literal_start0 + op_type + v_literal_start1
   for i in range(input_num) :
@@ -310,7 +312,7 @@ def create_v_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); //scripts/VLiteral.py create_v_op\n"
   if "MaskedOperation" in op_attr :
     var = chr(ord('a') + input_num + 1)
-    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num + 1) + "]); // scripts/VVLiteral.py create_vv_op \n"
+    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VVLiteral.py create_vv_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += v_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + v_tama_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
