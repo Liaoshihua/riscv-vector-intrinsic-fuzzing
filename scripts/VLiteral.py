@@ -303,6 +303,8 @@ v_literal_strided_store_mask_end = '''
 def create_v_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   if op_id == "fmv_v":
     op_id = op_id + "_f"
+  elif op_id == "id_m":
+    op_id = "id_v"
   ret = ""
   ret += v_literal_start0 + op_type + v_literal_start1
   for i in range(input_num) :
