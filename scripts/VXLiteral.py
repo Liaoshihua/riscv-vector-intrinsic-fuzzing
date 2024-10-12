@@ -445,7 +445,7 @@ def create_vx_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/VXLiteral.py create_vx_op \n"
   if "MaskedOperation" in op_attr :
     var = chr(ord('a') + input_num + 1)
-    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VVLiteral.py create_vv_op \n"
+    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VXLiteral.py create_vx_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
