@@ -164,6 +164,26 @@ vx_literal_mask_body = '''
     if (dataM[i]) {
 '''
 
+vx_literal_mask_frm_body = '''
+  // script/VXLiteral.py vx_literal_mask_frm_body\n
+  assert(a->length == b->length && a->length == c->length &&
+         a->length == e->length && d->length == 1);
+
+  auto length = a->length;
+
+  auto dataM = getRawPointer(a);
+  auto dataA = getRawPointer(b);
+  auto dataB = getRawPointer(c);
+  auto dataOut = getRawPointer(e);
+  auto dataMO = getRawPointer(f);
+
+  auto sew = op->typeInfo->sew.to_int();
+  P.VU.vsew = sew;
+
+  for (int i = 0; i < length; ++i) {
+    if (dataM[i]) {
+'''
+
 vx_literal_mask_destructive_body = '''
   assert(a->length == b->length && a->length == d->length &&
           a->length == e->length && c->length == 1);
@@ -230,7 +250,7 @@ vx_literal_mask_destructive_body = '''
 
 vx_literal_mask_end = '''
     } else
-      dataOut[i] = dataMO[i];
+      dataOut[i] = dataMO[i];  // vx_literal_mask_end
   }
 }
 '''
@@ -448,6 +468,8 @@ def create_vx_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
     ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VXLiteral.py create_vx_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_end
+    elif "ScalarUIntXLen" in input_types:
+      ret += vx_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vx_literal_mask_body + include_literal("v" + op_id + ".h") + vx_tamu_literal_mask_end
     elif "TailUndisturbed" in op_attr and "MaskAgnostic" in op_attr : # tuma

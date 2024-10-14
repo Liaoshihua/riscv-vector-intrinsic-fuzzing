@@ -151,6 +151,28 @@ vv_ta_literal_nonmask_destructive_end = '''
 }
 '''
 
+vv_literal_mask_frm_body = '''
+  // scripts/VVLiteral.py vv_literal_mask_frm_body \n
+  assert(a->length == b->length && a->length == c->length &&
+         a->length == e->length && a->length == d->length);
+
+  auto length = a->length;
+
+  auto dataM = getRawPointer(a);  // mask
+  auto dataA = getRawPointer(b);   // operand 1
+  auto dataB = getRawPointer(c);   // operand 2
+  // d means frm
+  auto dataOut = getRawPointer(e);   // result
+  auto dataMO = getRawPointer(f);   // default result
+
+  auto sew = op->typeInfo->sew.to_int();
+  auto dataASew = c->typeInfo->sew.to_int(); // for index load / store only
+  P.VU.vsew = sew;
+
+  for (int i = 0; i < length; ++i) {
+    if (dataM[i]) {
+'''
+
 vv_literal_mask_body = '''
   // scripts/VVLiteral.py vv_literal_mask_body
   assert(a->length == b->length && a->length == c->length &&
@@ -453,6 +475,8 @@ def create_vv_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
     ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VVLiteral.py create_vv_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vv_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_end
+    elif "ScalarUIntXLen" in input_types:
+      ret += vv_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vv_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vv_literal_mask_body + include_literal("v" + op_id + ".h") + vv_tamu_literal_mask_end
     elif "TailUndisturbed" in op_attr and "MaskAgnostic" in op_attr : # tuma
