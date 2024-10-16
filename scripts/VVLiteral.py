@@ -259,6 +259,73 @@ vv_literal_mask_body_destructive = '''
     if (dataM[i]) {
 '''
 
+vv_literal_mask_frm_body_destructive = '''
+  // scripts/VVLiteral.py vv_literal_mask_frm_body_destructive
+  assert(a->length == b->length && a->length == c->length &&
+         a->length == f->length && a->length == d->length && 
+         e->length ==1);
+
+  auto length = a->length;
+
+  auto dataM = getRawPointer(a);  //  mask
+  auto dataMO = getRawPointer(b);  //  default vd
+  auto dataA = getRawPointer(b);  //  default vd
+  auto dataB = getRawPointer(c);  // operand 1
+  auto dataC = getRawPointer(d);  //  operand 2
+  // e means frm
+  auto dataOut = getRawPointer(f);  // vd
+
+  auto sew = op->typeInfo->sew.to_int();
+
+  #pragma push_macro("VI_VFP_VV_LOOP")
+  #undef VI_VFP_VV_LOOP
+  #define VI_VFP_VV_LOOP(BODY16, BODY32, BODY64)                               \\
+  RIF::RawDatumOperand vd(dataA[i]);                                           \\
+  RIF::RawDatumOperand vs1(dataB[i]);                                          \\
+  RIF::RawDatumOperand vs2(dataC[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  case e64:                                                                    \\
+    BODY64;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  #pragma push_macro("VI_VFP_VV_LOOP_WIDE")
+  #undef VI_VFP_VV_LOOP_WIDE
+  #define VI_VFP_VV_LOOP_WIDE(BODY16, BODY32)                                  \\
+  RIF::RawDatumOperand vd(dataA[i]);                                           \\
+  RIF::RawDatumOperand vs1(dataB[i]);                                          \\
+  RIF::RawDatumOperand vs2(dataC[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    vs2 = f16_to_f32(vs2);                                                     \\
+    vs1 = f16_to_f32(vs1);                                                     \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    vs2 = f32_to_f64(vs2);                                                     \\
+    vs1 = f32_to_f64(vs1);                                                     \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  for (int i = 0; i < length; ++i) {
+    if (dataM[i]) {
+'''
+
 vv_literal_mask_end = '''
     } else
       dataOut[i] = dataMO[i];
@@ -505,6 +572,8 @@ def create_destructive_vv_op(op_type, op_id, op_attr, output_type, input_num, in
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vv_literal_mask_body_destructive + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_destructive_end
+    elif "ScalarUIntXLen" in input_types:
+      ret += vv_literal_mask_frm_body_destructive + "\t" +include_literal("v" + op_id + ".h") + vv_literal_mask_destructive_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vv_literal_mask_body_destructive + include_literal("v" + op_id + ".h") + vv_tamu_literal_mask_destructive_end
     elif "TailUndisturbed" in op_attr and "MaskAgnostic" in op_attr : # tuma
