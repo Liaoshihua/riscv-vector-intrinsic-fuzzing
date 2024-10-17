@@ -285,6 +285,7 @@ iota_ta_literal_nonmask_end = '''
 '''
 
 iota_literal_mask_body = '''
+  //  iota_literal_mask_body
   auto length = a->length;
 
   auto dataM = getRawPointer(a);
@@ -393,6 +394,8 @@ def create_iota_op(op_type, op_id, op_attr, output_type, input_num, input_types)
   var = chr(ord('a') + input_num)
   ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/MiscMaskLiteral.py create_iota_op\n"
   if "MaskedOperation" in op_attr :
+    var = chr(ord('a') + input_num + 1)
+    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/MiscMaskLiteral.py create_iota_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += iota_tama_literal_mask_body + include_literal("v" + op_id + ".h") + iota_tama_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu

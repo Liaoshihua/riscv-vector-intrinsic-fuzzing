@@ -538,7 +538,7 @@ def create_vx_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
     ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VXLiteral.py create_vx_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_end
-    elif "ScalarUIntXLen" in input_types:
+    elif "ScalarUIntXLen" in input_types and op_id not in ['nsra_wx','nsrl_wx','sll_vx','sra_vx','srl_vx'] :
       ret += vx_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vx_literal_mask_body + include_literal("v" + op_id + ".h") + vx_tamu_literal_mask_end
@@ -568,7 +568,7 @@ def create_destructive_vx_op(op_type, op_id, op_attr, output_type, input_num, in
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_mask_destructive_body  + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_destructive_end
-    elif "ScalarUIntXLen" in input_types:
+    elif "ScalarUIntXLen" in input_types and op_id not in ['nsra_wx'] :
       ret += vx_literal_mask_frm_destructive_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_mask_destructive_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vx_literal_mask_destructive_body + include_literal("v" + op_id + ".h") + vx_tamu_literal_mask_destructive_end
