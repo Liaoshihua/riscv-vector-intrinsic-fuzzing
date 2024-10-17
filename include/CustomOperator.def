@@ -1292,7 +1292,6 @@ CUSTOM_OP_TYPE(MseqVX8VBoolVBVISI_m, mseq_vx, 8, BOOL, HaveVLParameter | MaskedO
 CUSTOM_OP_TYPE(MseqVX8VBoolVBVUSU_m, mseq_vx, 8, BOOL, HaveVLParameter | MaskedOperation, OneDBool, 3, OneDBool, OneDUInt8, ScalarUInt8)
 CUSTOM_OP_TYPE(MseqVX8VBoolVISI, mseq_vx, 8, BOOL, HaveVLParameter | NonmaskedOperation, OneDBool, 2, OneDInt8, ScalarInt8)
 CUSTOM_OP_TYPE(MseqVX8VBoolVUSU, mseq_vx, 8, BOOL, HaveVLParameter | NonmaskedOperation, OneDBool, 2, OneDUInt8, ScalarUInt8)
-CUSTOM_OP_TYPE(MsetM0VBool, mset_m, 0, BOOL, HaveVLParameter | NonmaskedOperation, OneDBool, 0, )
 CUSTOM_OP_TYPE(MsgeVV16VBoolVBVIVI_m, msge_vv, 16, BOOL, HaveVLParameter | MaskedOperation, OneDBool, 3, OneDBool, OneDInt16, OneDInt16)
 CUSTOM_OP_TYPE(MsgeVV16VBoolVIVI, msge_vv, 16, BOOL, HaveVLParameter | NonmaskedOperation, OneDBool, 2, OneDInt16, OneDInt16)
 CUSTOM_OP_TYPE(MsgeVV32VBoolVBVIVI_m, msge_vv, 32, BOOL, HaveVLParameter | MaskedOperation, OneDBool, 3, OneDBool, OneDInt32, OneDInt32)
