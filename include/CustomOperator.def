@@ -1099,7 +1099,6 @@ CUSTOM_OP_TYPE(MaxuVX64VUInt64VBVUSU_m, maxu_vx, 64, UNSIGNED_INT, HaveVLParamet
 CUSTOM_OP_TYPE(MaxuVX64VUInt64VUSU, maxu_vx, 64, UNSIGNED_INT, HaveVLParameter | NonmaskedOperation, OneDUInt64, 2, OneDUInt64, ScalarUInt64)
 CUSTOM_OP_TYPE(MaxuVX8VUInt8VBVUSU_m, maxu_vx, 8, UNSIGNED_INT, HaveVLParameter | MaskedOperation, OneDUInt8, 3, OneDBool, OneDUInt8, ScalarUInt8)
 CUSTOM_OP_TYPE(MaxuVX8VUInt8VUSU, maxu_vx, 8, UNSIGNED_INT, HaveVLParameter | NonmaskedOperation, OneDUInt8, 2, OneDUInt8, ScalarUInt8)
-CUSTOM_OP_TYPE(MclrM0VBool, mclr_m, 0, BOOL, HaveVLParameter | NonmaskedOperation, OneDBool, 0, )
 CUSTOM_OP_TYPE(MergeVVM16VFloat16VFVFVB, merge_vvm, 16, FLOAT, HaveVLParameter | NonmaskedOperation | MergeOperation, OneDFloat16, 3, OneDFloat16, OneDFloat16, OneDBool)
 CUSTOM_OP_TYPE(MergeVVM16VInt16VIVIVB, merge_vvm, 16, SIGNED_INT, HaveVLParameter | NonmaskedOperation | MergeOperation, OneDInt16, 3, OneDInt16, OneDInt16, OneDBool)
 CUSTOM_OP_TYPE(MergeVVM16VUInt16VUVUVB, merge_vvm, 16, UNSIGNED_INT, HaveVLParameter | NonmaskedOperation | MergeOperation, OneDUInt16, 3, OneDUInt16, OneDUInt16, OneDBool)
