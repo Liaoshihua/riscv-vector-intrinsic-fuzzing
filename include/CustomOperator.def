@@ -1356,8 +1356,6 @@ CUSTOM_OP_TYPE(MsgtuVX64VBoolVBVUSU_m, msgtu_vx, 64, BOOL, HaveVLParameter | Mas
 CUSTOM_OP_TYPE(MsgtuVX64VBoolVUSU, msgtu_vx, 64, BOOL, HaveVLParameter | NonmaskedOperation, OneDBool, 2, OneDUInt64, ScalarUInt64)
 CUSTOM_OP_TYPE(MsgtuVX8VBoolVBVUSU_m, msgtu_vx, 8, BOOL, HaveVLParameter | MaskedOperation, OneDBool, 3, OneDBool, OneDUInt8, ScalarUInt8)
 CUSTOM_OP_TYPE(MsgtuVX8VBoolVUSU, msgtu_vx, 8, BOOL, HaveVLParameter | NonmaskedOperation, OneDBool, 2, OneDUInt8, ScalarUInt8)
-CUSTOM_OP_TYPE(MsifM0VBoolVB, msif_m, 0, BOOL, HaveVLParameter | NonmaskedOperation, OneDBool, 1, OneDBool)
-CUSTOM_OP_TYPE(MsifM0VBoolVBVB_m, msif_m, 0, BOOL, HaveVLParameter | MaskedOperation, OneDBool, 2, OneDBool, OneDBool)
 CUSTOM_OP_TYPE(MsleVV16VBoolVBVIVI_m, msle_vv, 16, BOOL, HaveVLParameter | MaskedOperation, OneDBool, 3, OneDBool, OneDInt16, OneDInt16)
 CUSTOM_OP_TYPE(MsleVV16VBoolVIVI, msle_vv, 16, BOOL, HaveVLParameter | NonmaskedOperation, OneDBool, 2, OneDInt16, OneDInt16)
 CUSTOM_OP_TYPE(MsleVV32VBoolVBVIVI_m, msle_vv, 32, BOOL, HaveVLParameter | MaskedOperation, OneDBool, 3, OneDBool, OneDInt32, OneDInt32)
