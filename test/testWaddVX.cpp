@@ -8,17 +8,17 @@ int dataB = 2;
 
 TEST(Golden, WaddWVX8VInt16) {
   NONMASK_VV_VX_GEN_TEST(OneDInt8, ScalarInt8, OneDInt16, NONMASK_VX_VALUE_INIT,
-                         WaddWVX8VInt16);
+                         WaddWX8VInt16VISI);
   EXPECT_EQ(verifyResult(c, golden), true);
 }
 TEST(Golden, WaddWVX16VInt32) {
   NONMASK_VV_VX_GEN_TEST(OneDInt16, ScalarInt16, OneDInt32,
-                         NONMASK_VX_VALUE_INIT, WaddWVX16VInt32);
+                         NONMASK_VX_VALUE_INIT, WaddWX16VInt32VISI);
   EXPECT_EQ(verifyResult(c, golden), true);
 }
 TEST(Golden, WaddWVX32VInt64) {
   NONMASK_VV_VX_GEN_TEST(OneDInt32, ScalarInt32, OneDInt64,
-                         NONMASK_VX_VALUE_INIT, WaddWVX32VInt64);
+                         NONMASK_VX_VALUE_INIT, WaddWX32VInt64VISI);
   EXPECT_EQ(verifyResult(c, golden), true);
 }
 

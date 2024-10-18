@@ -4,4 +4,3 @@ build/
 include/autogen
 include/AutoGenComputeOp.h
 *.pyc
-test/
