@@ -145,10 +145,10 @@ msbf_msif_msof_literal_nonmask_end = '''
 msbf_msif_msof_literal_mask_body = '''
   auto length = a->length;
 
-  auto dataM = getRawPointer(a);
-  auto dataMO = getRawPointer(b);
-  auto dataA = getRawPointer(c);
-  auto dataOut = getRawPointer(d);
+  auto dataM = getRawPointer(a);  // mask
+  auto dataA = getRawPointer(b);  // operand
+  auto dataOut = getRawPointer(c);  // result
+  auto dataMO = getRawPointer(d);  // vd default
 
   auto sew = op->typeInfo->sew;
 
@@ -214,6 +214,8 @@ def create_msbf_msif_msof_op(op_type, op_id, op_attr, output_type, input_num, in
   var = chr(ord('a') + input_num)
   ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/MiscMaskLiteral.py create_msbf_msif_msof_op\n"
   if "MaskedOperation" in op_attr :
+    var = chr(ord('a') + input_num + 1)
+    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/MiscMaskLiteral.py create_msbf_msif_msof_op \n"
     if "MaskAgnostic" in op_attr :
       ret += msbf_msif_msof_ma_literal_mask_body + include_literal("v" + op_id + ".h") + msbf_msif_msof_ma_literal_mask_end
     else :
