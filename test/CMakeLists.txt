@@ -142,9 +142,6 @@ target_link_libraries(testEnumerateLmulMask gtest_main Graph)
 add_executable(testDatum testDatum.cpp)
 target_link_libraries(testDatum gtest_main softfloat)
 
-add_executable(testPolicy testPolicy.cpp)
-target_link_libraries(testPolicy gtest_main softfloat Graph)
-
 include(GoogleTest)
 gtest_discover_tests(testOneDIntegralValue)
 gtest_discover_tests(testOneDFloatingPointValue)
@@ -192,7 +189,6 @@ gtest_discover_tests(testMsofM)
 gtest_discover_tests(testPoc)
 gtest_discover_tests(testEnumerateLmul)
 gtest_discover_tests(testEnumerateLmulMask)
-gtest_discover_tests(testPolicy)
 
 add_test(
   NAME Golden.Codegen
