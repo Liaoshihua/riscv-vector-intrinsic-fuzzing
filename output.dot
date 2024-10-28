@@ -1,0 +1,66 @@
+digraph{
+vadd_vv_operator_0[shape=oval]
+vsuxei32_v_operator_1[shape=oval]
+vmadc_vv_operator_2[shape=oval]
+vfnmsub_vv_operator_3[shape=oval]
+vsub_vv_operator_4[shape=oval]
+vinit_rif_operator_5[shape=oval]
+vinit_rif_operator_6[shape=oval]
+vinit_rif_operator_7[shape=oval]
+vinit_rif_operator_8[shape=oval]
+vinit_rif_operator_9[shape=oval]
+vinit_rif_operator_10[shape=oval]
+vinit_rif_operator_11[shape=oval]
+vinit_rif_operator_12[shape=oval]
+vinit_rif_operator_13[shape=oval]
+vinit_rif_operator_14[shape=oval]
+vinit_rif_operator_15[shape=oval]
+vinit_rif_operator_16[shape=oval]
+OneDInt32_value_0[shape=rectangle]
+OneDInt32_value_1[shape=rectangle]
+OneDInt32_value_2[shape=rectangle]
+OneDBool_value_3[shape=rectangle]
+ScalarInt64_value_4[shape=rectangle]
+OneDUInt32_value_5[shape=rectangle]
+OneDInt64_value_6[shape=rectangle]
+OneDInt64_value_7[shape=rectangle]
+OneDUInt64_value_8[shape=rectangle]
+OneDUInt64_value_9[shape=rectangle]
+OneDFloat16_value_10[shape=rectangle]
+OneDFloat16_value_11[shape=rectangle]
+OneDFloat16_value_12[shape=rectangle]
+OneDFloat16_value_13[shape=rectangle]
+OneDInt16_value_14[shape=rectangle]
+OneDInt16_value_15[shape=rectangle]
+OneDInt16_value_16[shape=rectangle]
+vinit_rif_operator_5 -> OneDInt32_value_0
+OneDInt32_value_0 -> vadd_vv_operator_0
+vinit_rif_operator_6 -> OneDInt32_value_1
+OneDInt32_value_1 -> vadd_vv_operator_0
+vadd_vv_operator_0 -> OneDInt32_value_2
+vmadc_vv_operator_2 -> OneDBool_value_3
+OneDBool_value_3 -> vsuxei32_v_operator_1
+vinit_rif_operator_7 -> ScalarInt64_value_4
+ScalarInt64_value_4 -> vsuxei32_v_operator_1
+vinit_rif_operator_8 -> OneDUInt32_value_5
+OneDUInt32_value_5 -> vsuxei32_v_operator_1
+vinit_rif_operator_9 -> OneDInt64_value_6
+OneDInt64_value_6 -> vsuxei32_v_operator_1
+vsuxei32_v_operator_1 -> OneDInt64_value_7
+vinit_rif_operator_10 -> OneDUInt64_value_8
+OneDUInt64_value_8 -> vmadc_vv_operator_2
+vinit_rif_operator_11 -> OneDUInt64_value_9
+OneDUInt64_value_9 -> vmadc_vv_operator_2
+vinit_rif_operator_12 -> OneDFloat16_value_10
+OneDFloat16_value_10 -> vfnmsub_vv_operator_3
+vinit_rif_operator_13 -> OneDFloat16_value_11
+OneDFloat16_value_11 -> vfnmsub_vv_operator_3
+vinit_rif_operator_14 -> OneDFloat16_value_12
+OneDFloat16_value_12 -> vfnmsub_vv_operator_3
+vfnmsub_vv_operator_3 -> OneDFloat16_value_13
+vinit_rif_operator_15 -> OneDInt16_value_14
+OneDInt16_value_14 -> vsub_vv_operator_4
+vinit_rif_operator_16 -> OneDInt16_value_15
+OneDInt16_value_15 -> vsub_vv_operator_4
+vsub_vv_operator_4 -> OneDInt16_value_16
+}
