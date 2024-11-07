@@ -168,8 +168,6 @@ x_tumu_literal_mask_end = '''
 def create_x_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   ret = ""
   ret += x_literal_start0 + op_type + x_literal_start1
-  if op_id == "fmv_f":
-    op_id = op_id + "_s"
   for i in range(input_num) :
     var = chr(ord('a') + i)
     ret += "  auto " + var + " = static_cast<RIF::" + input_types[i] + "Val *>(op->inputs[" + str(i) + "]); // scripts/XLiteral.py create_x_op \n"
