@@ -173,6 +173,24 @@ vv_literal_mask_frm_body = '''
     if (dataM[i]) {
 '''
 
+vv_literal_nonmask_xrm_body= '''
+  // scripts/VVLiteral.py vv_literal_nonmask_mask_xrm_body \n
+  assert(a->length == b->length && a->length == d->length);
+
+  auto length = a->length;
+
+  auto dataA = getRawPointer(a);  // mask
+  auto dataB = getRawPointer(b);   // operand 1
+  // c means xrm
+  auto dataOut = getRawPointer(d);   // result
+
+  auto sew = op->typeInfo->sew.to_int();
+  auto dataASew = c->typeInfo->sew.to_int(); // for index load / store only
+  P.VU.vsew = sew;
+
+  for (int i = 0; i < length; ++i) {
+'''
+
 vv_literal_mask_body = '''
   // scripts/VVLiteral.py vv_literal_mask_body
   assert(a->length == b->length && a->length == c->length &&
@@ -542,7 +560,7 @@ def create_vv_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
     ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VVLiteral.py create_vv_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vv_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_end
-    elif "ScalarUIntXLen" in input_types:
+    elif "RoundingMode" in op_attr :
       ret += vv_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vv_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vv_literal_mask_body + include_literal("v" + op_id + ".h") + vv_tamu_literal_mask_end
@@ -557,6 +575,8 @@ def create_vv_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
         ret += vv_tu_literal_nonmask_body + include_literal("v" + op_id + ".h") + vv_tu_literal_nonmask_end
     elif "TailAgnostic" in op_attr :
         ret += vv_literal_nonmask_body + include_literal("v" + op_id + ".h") + vv_ta_literal_nonmask_end
+    elif "RoundingMode" in op_attr :
+        ret += vv_literal_nonmask_xrm_body + include_literal("v" + op_id + ".h") + vv_ta_literal_nonmask_end
     else :
       ret += vv_literal_nonmask_body + include_literal("v" + op_id + ".h") + vv_literal_nonmask_end
   return ret
@@ -572,7 +592,7 @@ def create_destructive_vv_op(op_type, op_id, op_attr, output_type, input_num, in
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vv_literal_mask_body_destructive + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_destructive_end
-    elif "ScalarUIntXLen" in input_types:
+    elif "RoundingMode" in op_attr :
       ret += vv_literal_mask_frm_body_destructive + "\t" +include_literal("v" + op_id + ".h") + vv_literal_mask_destructive_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vv_literal_mask_body_destructive + include_literal("v" + op_id + ".h") + vv_tamu_literal_mask_destructive_end

@@ -185,6 +185,23 @@ vx_literal_mask_frm_body = '''
     if (dataM[i]) {
 '''
 
+vx_literal_nonmask_xrm_body = '''
+  // script/VXLiteral.py vx_literal_nonmask_xrm_body\n
+  assert(a->length == b->length && a->length == c->length && d->length == 1);
+
+  auto length = a->length;
+
+  auto dataA = getRawPointer(a);
+  auto dataB = getRawPointer(b);
+  // c means vxrm
+  auto dataOut = getRawPointer(d);
+
+  auto sew = op->typeInfo->sew.to_int();
+  P.VU.vsew = sew;
+
+  for (int i = 0; i < length; ++i) {
+'''
+
 vx_literal_mask_destructive_body = '''
   // vx_literal_mask_destructive_body\n
   assert(a->length == b->length && a->length == d->length &&
@@ -538,7 +555,7 @@ def create_vx_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
     ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VXLiteral.py create_vx_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_end
-    elif "ScalarUIntXLen" in input_types and op_id not in ['nsra_wx','nsrl_wx','sll_vx','sra_vx','srl_vx'] :
+    elif "RoundingMode" in op_attr :
       ret += vx_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vx_literal_mask_body + include_literal("v" + op_id + ".h") + vx_tamu_literal_mask_end
@@ -551,6 +568,8 @@ def create_vx_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   else :
     if "TailUndisturbed" in op_attr :
       ret += vx_tu_literal_nonmask_body + include_literal("v" + op_id + ".h") + vx_tu_literal_nonmask_end
+    elif "RoundingMode" in op_attr :
+      ret += vx_literal_nonmask_xrm_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_nonmask_end
     elif "TailAgnostic" in op_attr :
       ret += vx_literal_nonmask_body + include_literal("v" + op_id + ".h") + vx_ta_literal_nonmask_end
     else :

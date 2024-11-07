@@ -1,3 +1,5 @@
+import re
+
 v_literal_start0 = "void compute"
 v_literal_start1 = "Op(RIF::OperatorBase *op) {\n"
 v_literal_nonmask_body = '''
@@ -319,10 +321,6 @@ v_literal_strided_store_mask_end = '''
 '''
 
 def create_v_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
-  if op_id == "fmv_v":
-    op_id = op_id + "_f"
-  elif op_id == "id_m":
-    op_id = "id_v"
   ret = ""
   ret += v_literal_start0 + op_type + v_literal_start1
   for i in range(input_num) :
@@ -335,7 +333,7 @@ def create_v_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
     ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VVLiteral.py create_vv_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += v_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + v_tama_literal_mask_end
-    elif "ScalarUIntXLen" in input_types:
+    elif "RoundingMode" in op_attr :
       ret += v_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + v_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += v_literal_mask_body + include_literal("v" + op_id + ".h") + v_tamu_literal_mask_end

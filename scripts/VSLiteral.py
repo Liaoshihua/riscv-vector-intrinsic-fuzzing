@@ -65,6 +65,7 @@ vs_tu_literal_nonmask_end = '''
 '''
 
 vs_literal_mask_body = '''
+  // scripts/VSLiteral.py vs_literal_mask_body \n
   assert(a->length == b->length && c->length == 1);
 
   auto length = a->length;
@@ -74,6 +75,29 @@ vs_literal_mask_body = '''
   auto dataOut = getRawPointer(c);
 
   auto sew = op->typeInfo->sew.to_int();
+
+  for (int i = 0; i < length; ++i) {
+    if (dataM[i]) {
+'''
+
+vs_literal_mask_frm_body = '''
+  // scripts/VSLiteral.py vs_literal_mask_frm_body \n
+  
+  assert(a->length == b->length && a->length == c->length && 
+         a->length == f->length && a->length == e->length && d->length == 1);
+
+  auto length = a->length;
+
+  auto dataM = getRawPointer(a);  // mask
+  auto dataA = getRawPointer(b);   // operand 1
+  auto dataB = getRawPointer(c);   // operand 2
+  // d means frm
+  auto dataOut = getRawPointer(e);   // result
+  auto dataMO = getRawPointer(f);   // default result
+
+  auto sew = op->typeInfo->sew.to_int();
+  auto dataASew = c->typeInfo->sew.to_int(); // for index load / store only
+  P.VU.vsew = sew;
 
   for (int i = 0; i < length; ++i) {
     if (dataM[i]) {
@@ -149,6 +173,8 @@ def create_vs_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr : # tam
       ret += vs_tam_literal_mask_body + include_literal("v" + op_id + ".h") + vs_tam_literal_mask_end
+    elif "RoundingMode" in op_attr :
+      ret += vs_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vs_literal_mask_end
     elif "TailUndisturbed" in op_attr : # tum
       ret += vs_tum_literal_mask_body + include_literal("v" + op_id + ".h") + vs_tum_literal_mask_end
     else :
