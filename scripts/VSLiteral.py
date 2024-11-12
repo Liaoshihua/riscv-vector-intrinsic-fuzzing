@@ -171,6 +171,8 @@ def create_vs_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   var = chr(ord('a') + input_num)
   ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/VSLiteral.py create_vs_op \n"
   if "MaskedOperation" in op_attr :
+    var = chr(ord('a') + input_num + 1)
+    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // masked op default vd scripts/VSLiteral.py create_vs_op \n"
     if "TailAgnostic" in op_attr : # tam
       ret += vs_tam_literal_mask_body + include_literal("v" + op_id + ".h") + vs_tam_literal_mask_end
     elif "RoundingMode" in op_attr :

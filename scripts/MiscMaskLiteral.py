@@ -466,9 +466,9 @@ id_tu_literal_nonmask_end = '''
 id_literal_mask_body = '''
   auto length = a->length;
 
-  auto dataM = getRawPointer(a);
-  auto dataMO = getRawPointer(b);
-  auto dataOut = getRawPointer(c);
+  auto dataM = getRawPointer(a); //mask
+  auto dataMO = getRawPointer(b);  // vd default
+  auto dataOut = getRawPointer(c); // vd
 
   auto sew = op->typeInfo->sew;
 
@@ -553,6 +553,8 @@ def create_id_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   var = chr(ord('a') + input_num)
   ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/MiscMaskLiteral.py create_id_op\n"
   if "MaskedOperation" in op_attr :
+    var = chr(ord('a') + input_num + 1)
+    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // masked op default vd scripts/MiscMaskLiteral.py create_id_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += id_tama_literal_mask_body + include_literal("v" + op_id + ".h") + id_tama_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
