@@ -94,6 +94,10 @@ bool isNarrowingValue(ValueBase *x, ValueBase *y) {
   return x->typeInfo->sew.to_int() * 2 == y->typeInfo->sew.to_int();
 }
 
+bool isRoundingMode(OperatorBase *op){
+  return op->opAttr & RoundingMode;
+}
+
 bool hasMask(const OperatorBase *op) { return op->opAttr & MaskedOperation; }
 
 bool hasNonmask(const OperatorBase *op) {
