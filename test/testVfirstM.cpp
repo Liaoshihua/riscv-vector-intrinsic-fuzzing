@@ -11,7 +11,7 @@ TEST(Golden, FirstMSInt32VB_0) {
            1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1};
   int32_t golden = 3;
   NONMASK_V_GEN_TEST(OneDBool, ScalarInt32, NONMASK_V_VALUE_INIT,
-                     FirstM0SIntXLenVB);
+                     FirstM0SIntXLenVB_m_b1);
   auto computed = getRawPointer(b);
   EXPECT_EQ(*computed, golden);
 }
@@ -19,7 +19,7 @@ TEST(Golden, FirstMSInt32VB_1) {
   dataA = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int32_t golden = -1;
   NONMASK_V_GEN_TEST(OneDBool, ScalarInt32, NONMASK_V_VALUE_INIT,
-                     FirstM0SIntXLenVB);
+                     FirstM0SIntXLenVB_m_b2);
   auto computed = getRawPointer(b);
   EXPECT_EQ(*computed, golden);
 }
