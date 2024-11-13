@@ -32,7 +32,7 @@ TEST(Golden, FirstMSInt32VB_2) {
            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
   int32_t golden = 119;
   NONMASK_V_GEN_TEST(OneDBool, ScalarInt32, NONMASK_V_VALUE_INIT,
-                     FirstM0SIntXLenVB);
+                     FirstM0SIntXLenVBVB_m);
   auto computed = getRawPointer(b);
   EXPECT_EQ(*computed, golden);
 }
