@@ -26,6 +26,20 @@ vs_ta_literal_nonmask_body = '''
   for (int i = 0; i < length; ++i) {
 '''
 
+vs_ta_literal_nonmask_reduction_body = '''
+  assert(a->length == b->length);
+
+  auto length = a->length;
+
+  auto dataA = getRawPointer(a);  // vs1
+  auto dataB = getRawPointer(b);  // vs2
+  auto dataOut = getRawPointer(c); // vd
+
+  auto sew = op->typeInfo->sew.to_int();
+
+  for (int i = 0; i < length; ++i) {
+'''
+
 vs_tu_literal_nonmask_body = '''
   assert(a->length == b->length);
 
@@ -186,6 +200,8 @@ def create_vs_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
       ret += vs_tu_literal_nonmask_body + include_literal("v" + op_id + ".h") + vs_tu_literal_nonmask_end
     elif "TailAgnostic" in op_attr :
       ret += vs_ta_literal_nonmask_body + include_literal("v" + op_id + ".h") + vs_ta_literal_nonmask_end
+    elif "ReductionOperation" in op_attr :
+      ret += vs_ta_literal_nonmask_reduction_body + include_literal("v" + op_id + ".h") + vs_ta_literal_nonmask_end
     else :
       ret += vs_literal_nonmask_body + include_literal("v" + op_id + ".h") + vs_literal_nonmask_end
   return ret
