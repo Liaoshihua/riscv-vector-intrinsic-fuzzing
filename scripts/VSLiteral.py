@@ -40,6 +40,24 @@ vs_ta_literal_nonmask_reduction_body = '''
   for (int i = 0; i < length; ++i) {
 '''
 
+vs_mask_reduction_body = '''
+  assert(a->length == b->length && a->length == c->length && 
+        a->length == d->length);
+
+  auto length = a->length;
+
+  auto dataM = getRawPointer(a);  // mask
+  auto dataA = getRawPointer(b);  // vs2
+  auto dataB = getRawPointer(c);  // vs1
+  auto dataOut = getRawPointer(d);  // vd
+
+  auto sew = op->typeInfo->sew.to_int();
+
+  for (int i = 0; i < length; ++i) {
+    memset(&dataOut[i], 0xff, sizeof(dataOut[i]));
+    if (dataM[i]) {
+'''
+
 vs_tu_literal_nonmask_body = '''
   assert(a->length == b->length);
 
@@ -98,7 +116,7 @@ vs_literal_mask_frm_body = '''
   // scripts/VSLiteral.py vs_literal_mask_frm_body \n
   
   assert(a->length == b->length && a->length == c->length && 
-         a->length == f->length && a->length == e->length && d->length == 1);
+         a->length == e->length && d->length == 1);
 
   auto length = a->length;
 
@@ -107,7 +125,6 @@ vs_literal_mask_frm_body = '''
   auto dataB = getRawPointer(c);   // operand 2
   // d means frm
   auto dataOut = getRawPointer(e);   // result
-  auto dataMO = getRawPointer(f);   // default result
 
   auto sew = op->typeInfo->sew.to_int();
   auto dataASew = c->typeInfo->sew.to_int(); // for index load / store only
@@ -185,14 +202,14 @@ def create_vs_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   var = chr(ord('a') + input_num)
   ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/VSLiteral.py create_vs_op \n"
   if "MaskedOperation" in op_attr :
-    var = chr(ord('a') + input_num + 1)
-    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // masked op default vd scripts/VSLiteral.py create_vs_op \n"
     if "TailAgnostic" in op_attr : # tam
       ret += vs_tam_literal_mask_body + include_literal("v" + op_id + ".h") + vs_tam_literal_mask_end
     elif "RoundingMode" in op_attr :
-      ret += vs_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vs_literal_mask_end
+      ret += vs_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vs_tam_literal_mask_end
     elif "TailUndisturbed" in op_attr : # tum
       ret += vs_tum_literal_mask_body + include_literal("v" + op_id + ".h") + vs_tum_literal_mask_end
+    elif "ReductionOperation" in op_attr :
+      ret += vs_mask_reduction_body + include_literal("v" + op_id + ".h") + vs_literal_mask_end
     else :
       ret += vs_literal_mask_body + include_literal("v" + op_id + ".h") + vs_literal_mask_end
   else :
