@@ -61,6 +61,7 @@ DataTypeEnum getDataTypeEnum(const char *dataTypeString) {
   else if (strcmp(dataTypeString, "size_t") == 0)
     return DataTypeEnum::Size_t;
   else
+    std::cerr << "Unhandled type: " << dataTypeString << std::endl;
     assert(false && "Unhandled type");
 }
 
@@ -172,6 +173,13 @@ ValueBase *getVs2(OperatorBase *op) {
                         : op->inputs[0];
   }
   return vs2;
+}
+
+ValueBase *getRM(OperatorBase *op) {
+  ValueBase *rm = nullptr;
+  if (op->opAttr & RoundingMode)
+    rm = op->inputs[sizeof(op->inputs)-1];
+  return rm;
 }
 
 bool isExistVs1Rs1(OperatorBase *op) {

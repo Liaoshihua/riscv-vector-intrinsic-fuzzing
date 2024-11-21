@@ -277,10 +277,9 @@ vx_literal_mask_frm_destructive_body = '''
 
   auto dataM = getRawPointer(a); // mask
   auto dataMO = getRawPointer(b);  // default vd
-  auto dataA = getRawPointer(b);  // operand vd
-  auto dataB = getRawPointer(c);  // operand 1
-  auto dataC = getRawPointer(d);  // operand 2
-  // e means frm
+  auto dataA = getRawPointer(c);  // rs1
+  auto dataB = getRawPointer(d);  // vs2
+  auto dataC = getRawPointer(e);  // frm
   auto dataOut = getRawPointer(f); // vd
 
   auto sew = op->typeInfo->sew.to_int();
@@ -587,7 +586,7 @@ def create_destructive_vx_op(op_type, op_id, op_attr, output_type, input_num, in
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_mask_destructive_body  + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_destructive_end
-    elif "ScalarUIntXLen" in input_types and op_id not in ['nsra_wx'] :
+    elif "RoundingMode" in op_attr :
       ret += vx_literal_mask_frm_destructive_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_mask_destructive_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vx_literal_mask_destructive_body + include_literal("v" + op_id + ".h") + vx_tamu_literal_mask_destructive_end

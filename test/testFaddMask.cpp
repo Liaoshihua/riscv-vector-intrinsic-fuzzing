@@ -34,20 +34,20 @@ TEST(Golden, FaddVV64VFloat64VBVFVFVF_m) {
 TEST(Golden, FaddVF16VFloat16VBVFVFSF_m) {
   MASK_VV_VX_GEN_TEST(OneDBool, OneDFloat16, OneDFloat16, ScalarFloat16,
                       OneDFloat16, MASK_FP_VF_VALUE_INIT(16),
-                      FaddVV16VFloat16VBVFVFSL_m);
+                      FaddVF16VFloat16VBVFSF16_m);
   verifyResult(output, goldenVF);
 }
 
 TEST(Golden, FaddVF32VFloat32VBVFVFSF_m) {
   MASK_VV_VX_GEN_TEST(OneDBool, OneDFloat32, OneDFloat32, ScalarFloat32,
                       OneDFloat32, MASK_FP_VF_VALUE_INIT(32),
-                      FaddVV32VFloat32VBVFVFSL_m);
+                      FaddVF32VFloat32VBVFSF32_m);
   verifyResult(output, goldenVF);
 }
 
 TEST(Golden, FaddVF64VFloat64VBVFVFSF_m) {
   MASK_VV_VX_GEN_TEST(OneDBool, OneDFloat64, OneDFloat64, ScalarFloat64,
                       OneDFloat64, MASK_FP_VF_VALUE_INIT(64),
-                      FaddVV64VFloat64VBVFVFSL_m);
+                      FaddVF64VFloat64VBVFSF64_m);
   verifyResult(output, goldenVF);
 }

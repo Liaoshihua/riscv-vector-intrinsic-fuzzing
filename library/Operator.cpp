@@ -336,7 +336,7 @@ std::string loadOneDToVector(std::ostream &os, ValueBase *value,
     resultVec = getUniqueName("vec_" + value->id);
     os << "\t" << typeInfo.vectorTypeName << " " << resultVec << " = __riscv_vle"
        << typeInfo.sew.to_string() << "_v_" << typeInfo.shortVectorTypeName
-       << "(" << holder << ", vl); // QAQ\n";
+       << "(" << holder << ", vl);\n";
   }
   return resultVec;
 }
@@ -344,6 +344,8 @@ std::string loadOneDToVector(std::ostream &os, ValueBase *value,
 static void genIntrinsicFuncSuffix(std::ostream &os, OperatorBase *op,
                                    const std::vector<std::string> &args) {
   const OperatorAttrT &opAttr = op->opAttr;
+  if (op->opAttr & RoundingMode)
+    os << "_rm";
   if (isExplicitPolicy(op)) {
     os << "_";
     if (hasTA(op)) {
@@ -686,10 +688,10 @@ struct CodeGenForReductionOperator : CodeGenForOperator {
         if (hasTA(op) || hasTU(op)) { // tu or tam
           args = {loaded[0], loaded[1], vecReduction};
         } else { // normal _m
-          args = {loaded[0], vecReduction, loaded[1], vecReduction};
+          args = {loaded[0], loaded[1]};
         }
       } else if (loaded.size() == 3) { // tum
-        args = {loaded[0], loaded[1], loaded[2], vecReduction};
+        args = {loaded[0], loaded[1], loaded[2]};
       }
 
       genReductionOpString(os, op, vecReduction, args);
@@ -1496,6 +1498,24 @@ static void generateMulAddOperatorCode(std::ostream &os, OperatorBase *op) {
   codegen.generateSingleOperatorCode();
 }
 
+static void generateMulAddRMOperatorCode(std::ostream &os, OperatorBase *op) {
+  ValueBase *vd = getVd(op);
+  ValueBase *maskedoff = getMaskedoff(op);
+  ValueBase *vs2 = getVs2(op);
+  ValueBase *vs1 = getVs1(op);
+  ValueBase *rm = getRM(op);
+  const int roundingmode;
+  if (!(op->opAttr & NoMaskedOff))
+    assert(maskedoff != nullptr);
+  assert(vs2 != nullptr);
+  assert(vs1 != nullptr);
+  assert(rm != nullptr);
+  assert(vd != nullptr);
+
+  CodeGenForOperator codegen(os, op, *vs2->typeInfo, vd->length);
+  codegen.generateSingleOperatorCode();
+}
+
 // Operators with suffix vvm / vxm / vfm
 static void generateVVMVXMOperatorCode(std::ostream &os, OperatorBase *op) {
   ValueBase *vs2 = getVs2(op);
@@ -1597,7 +1617,10 @@ static void generateOperatorCode(std::ostream &os, OperatorBase *op) {
   if (operandType == "vv" || operandType == "wv" || operandType == "vx" ||
       operandType == "wx" || operandType == "vf" || operandType == "wf") {
     if (op->opAttr & MulAddOperation)
-      generateMulAddOperatorCode(os, op);
+      if (op->opAttr & RoundingMode)
+        generateMulAddRMOperatorCode(os, op);
+      else
+        generateMulAddOperatorCode(os, op);
     else
       generateVVOrVXOperatorCode(os, op);
   } else if (operandType == "mm") {

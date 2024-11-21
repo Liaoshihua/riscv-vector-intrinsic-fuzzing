@@ -236,6 +236,7 @@ ValueBase *getMask(OperatorBase *op);
 ValueBase *getMaskedoff(OperatorBase *op);
 ValueBase *getVs2(OperatorBase *op);
 ValueBase *getVs1(OperatorBase *op);
+ValueBase *getRM(OperatorBase *op);
 
 /*
 Set all inputs/outputs to LMUL of `op`.

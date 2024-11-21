@@ -96,6 +96,67 @@ vv_literal_nonmask_destructive_body = '''
   for (int i = 0; i < length; ++i) {
 '''
 
+vv_literal_nonmask_destructive_frm_body = '''
+  // scripts/VVLiteral.py vv_literal_nonmask_destructive_frm_body
+  assert(a->length == b->length && a->length == c->length && a->length == e->length);
+
+  auto length = a->length;
+
+  auto dataA = getRawPointer(a);
+  auto dataB = getRawPointer(b);
+  auto dataC = getRawPointer(c);
+  auto dataOut = getRawPointer(e);
+
+  auto sew = op->typeInfo->sew.to_int();
+
+  #pragma push_macro("VI_VFP_VV_LOOP")
+  #undef VI_VFP_VV_LOOP
+  #define VI_VFP_VV_LOOP(BODY16, BODY32, BODY64)                               \\
+  RIF::RawDatumOperand vd(dataA[i]);                                           \\
+  RIF::RawDatumOperand vs1(dataB[i]);                                          \\
+  RIF::RawDatumOperand vs2(dataC[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  case e64:                                                                    \\
+    BODY64;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  #pragma push_macro("VI_VFP_VV_LOOP_WIDE")
+  #undef VI_VFP_VV_LOOP_WIDE
+  #define VI_VFP_VV_LOOP_WIDE(BODY16, BODY32)                                  \\
+  RIF::RawDatumOperand vd(dataA[i]);                                           \\
+  RIF::RawDatumOperand vs1(dataB[i]);                                          \\
+  RIF::RawDatumOperand vs2(dataC[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    vs2 = f16_to_f32(vs2);                                                     \\
+    vs1 = f16_to_f32(vs1);                                                     \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    vs2 = f32_to_f64(vs2);                                                     \\
+    vs1 = f32_to_f64(vs1);                                                     \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  for (int i = 0; i < length; ++i) {
+'''
+
 def include_literal(filename):
     return "#include\"" + filename + "\""
 
@@ -153,8 +214,7 @@ vv_ta_literal_nonmask_destructive_end = '''
 
 vv_literal_mask_frm_body = '''
   // scripts/VVLiteral.py vv_literal_mask_frm_body \n
-  assert(a->length == b->length && a->length == c->length &&
-         a->length == e->length && a->length == d->length);
+  assert(a->length == b->length && a->length == c->length && a->length == e->length);
 
   auto length = a->length;
 
@@ -163,7 +223,6 @@ vv_literal_mask_frm_body = '''
   auto dataB = getRawPointer(c);   // operand 2
   // d means frm
   auto dataOut = getRawPointer(e);   // result
-  auto dataMO = getRawPointer(f);   // default result
 
   auto sew = op->typeInfo->sew.to_int();
   auto dataASew = c->typeInfo->sew.to_int(); // for index load / store only
@@ -193,8 +252,7 @@ vv_literal_nonmask_xrm_body= '''
 
 vv_literal_mask_body = '''
   // scripts/VVLiteral.py vv_literal_mask_body
-  assert(a->length == b->length && a->length == c->length &&
-         a->length == e->length && a->length == d->length);
+  assert(a->length == b->length && a->length == c->length && a->length == d->length);
 
   auto length = a->length;
 
@@ -556,12 +614,10 @@ def create_vv_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   var = chr(ord('a') + input_num)
   ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->outputs[0]); // scripts/VVLiteral.py create_vv_op \n"
   if "MaskedOperation" in op_attr :
-    var = chr(ord('a') + input_num + 1)
-    ret += "  auto " + var + " = static_cast<RIF::" + output_type + "Val *>(op->inputs[" + str(input_num) + "]); // scripts/VVLiteral.py create_vv_op \n"
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vv_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_end
     elif "RoundingMode" in op_attr :
-      ret += vv_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vv_literal_mask_end
+      ret += vv_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vv_tama_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vv_literal_mask_body + include_literal("v" + op_id + ".h") + vv_tamu_literal_mask_end
     elif "TailUndisturbed" in op_attr and "MaskAgnostic" in op_attr : # tuma
@@ -569,7 +625,7 @@ def create_vv_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
     elif "TailUndisturbed" in op_attr and "MaskUndisturbed" in op_attr : # tumu
       ret += vv_literal_mask_body + include_literal("v" + op_id + ".h") + vv_tumu_literal_mask_end
     else : # No explicit policy specified
-      ret += vv_literal_mask_body + include_literal("v" + op_id + ".h") + vv_literal_mask_end
+      ret += vv_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_end
   else :
     if "TailUndisturbed" in op_attr :
         ret += vv_tu_literal_nonmask_body + include_literal("v" + op_id + ".h") + vv_tu_literal_nonmask_end
@@ -607,6 +663,8 @@ def create_destructive_vv_op(op_type, op_id, op_attr, output_type, input_num, in
         ret += vv_literal_nonmask_destructive_body + include_literal("v" + op_id + ".h") + vv_tu_literal_nonmask_destructive_end
     elif "TailAgnostic" in op_attr :
         ret += vv_literal_nonmask_destructive_body + include_literal("v" + op_id + ".h") + vv_ta_literal_nonmask_destructive_end
+    elif "RoundingMode" in op_attr:
+        ret += vv_literal_nonmask_destructive_frm_body + include_literal("v" + op_id + ".h") + vv_literal_nonmask_destructive_end
     else :
       ret += vv_literal_nonmask_destructive_body + include_literal("v" + op_id + ".h") + vv_literal_nonmask_destructive_end
   return ret
