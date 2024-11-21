@@ -41,8 +41,10 @@ vs_ta_literal_nonmask_reduction_body = '''
 '''
 
 vs_mask_reduction_body = '''
+// vs_mask_reduction_body
+
   assert(a->length == b->length && a->length == c->length && 
-        a->length == d->length);
+         d->length == 1);
 
   auto length = a->length;
 
