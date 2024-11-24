@@ -53,6 +53,7 @@ ValueBase *getVd(OperatorBase *op);
 ValueBase *getMask(OperatorBase *op);
 ValueBase *getMaskedoff(OperatorBase *op);
 ValueBase *getVs2(OperatorBase *op);
+ValueBase *getRM(OperatorBase *op);
 bool isExistVs1Rs1(OperatorBase *op);
 ValueBase *getVs1(OperatorBase *op);
 bool isMaskOfOperator(OperatorBase *op, ValueBase *value);

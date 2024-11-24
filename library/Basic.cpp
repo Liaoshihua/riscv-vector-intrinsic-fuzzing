@@ -60,6 +60,8 @@ DataTypeEnum getDataTypeEnum(const char *dataTypeString) {
     return DataTypeEnum::Ptrdiff_t;
   else if (strcmp(dataTypeString, "size_t") == 0)
     return DataTypeEnum::Size_t;
+  else if (strcmp(dataTypeString, "const_int") == 0)
+    return DataTypeEnum::Const_int;
   else
     std::cerr << "Unhandled type: " << dataTypeString << std::endl;
     assert(false && "Unhandled type");
@@ -70,7 +72,8 @@ bool isIntegral(DataTypeEnum dt) {
          dt == DataTypeEnum::Uint32_t || dt == DataTypeEnum::Uint64_t ||
          dt == DataTypeEnum::Int8_t || dt == DataTypeEnum::Int16_t ||
          dt == DataTypeEnum::Int32_t || dt == DataTypeEnum::Int64_t ||
-         dt == DataTypeEnum::Ptrdiff_t || dt == DataTypeEnum::Size_t;
+         dt == DataTypeEnum::Ptrdiff_t || dt == DataTypeEnum::Size_t ||
+         dt == DataTypeEnum::Const_int;
 }
 
 bool isWideningOperator(OperatorBase *op) {

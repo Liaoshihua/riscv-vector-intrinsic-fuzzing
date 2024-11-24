@@ -18,6 +18,7 @@ enum TypeClass {
   FLOAT,
   BOOL,
   NumberOfTypeClasses,
+  CONSTANT_INT,
 };
 
 #define TYPE_CLASS_STR(TC)                                                     \
@@ -25,6 +26,7 @@ enum TypeClass {
   : (TC) == UNSIGNED_INT ? "uint"                                              \
   : (TC) == FLOAT        ? "float"                                             \
   : (TC) == BOOL         ? "bool"                                              \
+  : (TC) == CONSTANT_INT ? "const int"                                         \
                  : (assert("Unknown type class!?"), "<SOME_THING_WRONG>")
 
 #define TYPE_CLASS_SHORT_STR(TC)                                               \

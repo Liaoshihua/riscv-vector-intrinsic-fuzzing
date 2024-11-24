@@ -282,7 +282,6 @@ void Graph::generateCCode(std::ostream &os, uint32_t seed) {
     if (op->type != Initialize)
       initializeLmul(op);
     os << "void " << op->getNameWithType() << "() {\n";
-    os << "// getNameWithType \n";
     op->generateCCode(os);
     os << "}\n";
   }

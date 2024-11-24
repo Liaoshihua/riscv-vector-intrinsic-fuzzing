@@ -82,6 +82,8 @@ void generateOneDInitCCode(std::ostream &os, ValueBase *value,
       os << std::to_string((long)raw[i]) << "ll";
     } else if (value->dt == DataTypeEnum::Size_t) {
       os << std::to_string((unsigned long)raw[i]) << "ull";
+    } else if (value->dt == DataTypeEnum::Const_int) {
+      os << std::to_string((const int)raw[i]);
     } else {
       assert(false && "Unkown dataType");
     }
@@ -156,6 +158,8 @@ void generateScalarInitCCode(std::ostream &os, ValueBase *value,
     os << std::to_string((long)*raw) << "ll";
   } else if (value->dt == DataTypeEnum::Size_t) {
     os << std::to_string((unsigned long)*raw) << "ull";
+  } else if (value->dt == DataTypeEnum::Const_int) {
+    os << std::to_string((const int)raw[i]);
   } else {
     assert(false && "Unkown dataType");
   }
@@ -212,13 +216,16 @@ void InitializeOp::generateCCode(std::ostream &os) {
 }
 
 static std::string getRawPointerString(std::ostream &os, ValueBase *value,
-                                       bool isWrite = false) {
+                                       bool isWrite = false,
+                                       bool isRM = false) {
   std::string holder = getNewPlaceholderName();
   if (isOneDValue(value))
     os << value->dataTypeID << " *" << holder << " = " << value->id << "; // vector \n";
   else if (isScalarValue(value)) {
     if (isWrite)
       os << value->dataTypeID << " *" << holder << " = &" << value->id << "; // scalar \n";
+    else if (isRM)
+      os << valaue->dataTypeID << " " << holder << " = " << value->id << "; // Rounding mode \n";
     else
       os << value->dataTypeID << " " << holder << " = " << value->id << "; // scalr not write \n";
   } else

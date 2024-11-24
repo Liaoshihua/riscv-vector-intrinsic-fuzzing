@@ -68,6 +68,7 @@ enum DataTypeEnum {
   Float64_t,
   Ptrdiff_t,
   Size_t,
+  Const_int,
   Not_set // Don't set for `Operator`
 };
 
