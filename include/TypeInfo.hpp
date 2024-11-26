@@ -26,7 +26,7 @@ enum TypeClass {
   : (TC) == UNSIGNED_INT ? "uint"                                              \
   : (TC) == FLOAT        ? "float"                                             \
   : (TC) == BOOL         ? "bool"                                              \
-  : (TC) == CONSTANT_INT ? "const int"                                         \
+  : (TC) == CONSTANT_INT ? "const_int"                                         \
                  : (assert("Unknown type class!?"), "<SOME_THING_WRONG>")
 
 #define TYPE_CLASS_SHORT_STR(TC)                                               \
@@ -59,7 +59,7 @@ enum LmulType {
 
 class SewType {
 public:
-  enum class Value { e8, e16, e32, e64, NumberOfSews };
+  enum class Value {e8, e16, e32, e64, NumberOfSews };
 
   explicit SewType(int);
   explicit SewType(Value);

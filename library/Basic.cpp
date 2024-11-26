@@ -60,8 +60,6 @@ DataTypeEnum getDataTypeEnum(const char *dataTypeString) {
     return DataTypeEnum::Ptrdiff_t;
   else if (strcmp(dataTypeString, "size_t") == 0)
     return DataTypeEnum::Size_t;
-  else if (strcmp(dataTypeString, "const_int") == 0)
-    return DataTypeEnum::Const_int;
   else
     std::cerr << "Unhandled type: " << dataTypeString << std::endl;
     assert(false && "Unhandled type");
@@ -72,8 +70,7 @@ bool isIntegral(DataTypeEnum dt) {
          dt == DataTypeEnum::Uint32_t || dt == DataTypeEnum::Uint64_t ||
          dt == DataTypeEnum::Int8_t || dt == DataTypeEnum::Int16_t ||
          dt == DataTypeEnum::Int32_t || dt == DataTypeEnum::Int64_t ||
-         dt == DataTypeEnum::Ptrdiff_t || dt == DataTypeEnum::Size_t ||
-         dt == DataTypeEnum::Const_int;
+         dt == DataTypeEnum::Ptrdiff_t || dt == DataTypeEnum::Size_t;
 }
 
 bool isWideningOperator(OperatorBase *op) {
@@ -178,12 +175,13 @@ ValueBase *getVs2(OperatorBase *op) {
   return vs2;
 }
 
-ValueBase *getRM(OperatorBase *op) {
-  ValueBase *rm = nullptr;
-  if (op->opAttr & RoundingMode)
-    rm = op->inputs[sizeof(op->inputs)-1];
-  return rm;
-}
+// todo: random csr
+// ValueBase *getRM(OperatorBase *op) {
+//   ValueBase *rm = nullptr;
+//   if (op->opAttr & RoundingMode)
+//     rm = op->inputs[sizeof(op->inputs)-1];
+//   return rm;
+// }
 
 bool isExistVs1Rs1(OperatorBase *op) {
   std::string typeID = op->typeID;

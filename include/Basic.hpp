@@ -68,7 +68,6 @@ enum DataTypeEnum {
   Float64_t,
   Ptrdiff_t,
   Size_t,
-  Const_int,
   Not_set // Don't set for `Operator`
 };
 
@@ -237,7 +236,6 @@ ValueBase *getMask(OperatorBase *op);
 ValueBase *getMaskedoff(OperatorBase *op);
 ValueBase *getVs2(OperatorBase *op);
 ValueBase *getVs1(OperatorBase *op);
-ValueBase *getRM(OperatorBase *op);
 
 /*
 Set all inputs/outputs to LMUL of `op`.

@@ -241,6 +241,7 @@ void Graph::emitHeader(std::ostream &os) {
         "0x007FFFFF))\n";
   os << "#define isNaNF64UI( a ) (((~(a) & UINT64_C( 0x7FF0000000000000 )) == "
         "0) && ((a) & UINT64_C( 0x000FFFFFFFFFFFFF )))\n";
+  os << "#define rm 1\n";
 }
 
 void Graph::generateData(uint32_t seed) {
