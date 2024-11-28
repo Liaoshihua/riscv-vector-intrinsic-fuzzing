@@ -1,8 +1,7 @@
 x_literal_start0 = "void compute"
 x_literal_start1 = "Op(RIF::OperatorBase *op) {\n"
 x_literal_nonmask_body = '''
-  assert(a->length == 1);
-
+   // script/XLiteral.py x_literal_nonmask_body
   auto length = b->length;
 
   auto dataA = getRawPointer(a);
@@ -14,6 +13,26 @@ x_literal_nonmask_body = '''
   #undef VI_VF_MERGE_LOOP
   #define VI_VF_MERGE_LOOP(BODY)                                               \\
   RIF::RawDatumOperand rs1(*dataA);                                            \\
+  RIF::RawDatumOperand vd;                                                     \\
+  BODY                                                                         \\
+  dataOut[i] = vd;
+
+  for (int i = 0; i < length; ++i) {
+'''
+
+x_literal_nonmask_mv_body = '''
+   // script/XLiteral.py x_literal_nonmask_mv_body
+  auto length = a->length;
+
+  auto dataA = getRawPointer(a);
+  auto dataOut = getRawPointer(b);
+
+  auto sew = op->typeInfo->sew.to_int();
+
+  #pragma push_macro("VI_VF_MERGE_LOOP")
+  #undef VI_VF_MERGE_LOOP
+  #define VI_VF_MERGE_LOOP(BODY)                                               \\
+  RIF::RawDatumOperand vs1(dataA[i]);                                            \\
   RIF::RawDatumOperand vd;                                                     \\
   BODY                                                                         \\
   dataOut[i] = vd;
@@ -189,6 +208,8 @@ def create_x_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
       ret += x_tu_literal_nonmask_body + include_literal("v" + op_id + ".h") + x_tu_literal_nonmask_end
     elif "TailAgnostic" in op_attr :
       ret += x_literal_nonmask_body + include_literal("v" + op_id + ".h") + x_ta_literal_nonmask_end
+    elif "NoVLParameter" in op_attr:
+      ret += x_literal_nonmask_mv_body + include_literal("v" + op_id + ".h") + x_literal_nonmask_end
     else :
       ret += x_literal_nonmask_body + include_literal("v" + op_id + ".h") + x_literal_nonmask_end
   return ret

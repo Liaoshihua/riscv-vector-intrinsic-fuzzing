@@ -1460,6 +1460,7 @@ static void generateVOperatorCode(std::ostream &os, OperatorBase *op) {
   ValueBase *vs2 = getVs2(op);
   assert(getVs1(op) == nullptr);
   assert(vd != nullptr);
+  std::cerr << "op:" << op -> typeID;
   assert(vs2 != nullptr);
 
   CodeGenForOperator codegen(os, op, *op->typeInfo, vd->length);
@@ -1508,12 +1509,10 @@ static void generateMulAddRMOperatorCode(std::ostream &os, OperatorBase *op) {
   ValueBase *maskedoff = getMaskedoff(op);
   ValueBase *vs2 = getVs2(op);
   ValueBase *vs1 = getVs1(op);
-  ValueBase *rm = getRM(op);
   if (!(op->opAttr & NoMaskedOff))
     assert(maskedoff != nullptr);
   assert(vs2 != nullptr);
   assert(vs1 != nullptr);
-  assert(rm != nullptr);
   assert(vd != nullptr);
 
   CodeGenForOperator codegen(os, op, *vs2->typeInfo, vd->length);
