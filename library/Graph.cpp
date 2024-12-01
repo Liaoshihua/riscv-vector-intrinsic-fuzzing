@@ -241,7 +241,27 @@ void Graph::emitHeader(std::ostream &os) {
         "0x007FFFFF))\n";
   os << "#define isNaNF64UI( a ) (((~(a) & UINT64_C( 0x7FF0000000000000 )) == "
         "0) && ((a) & UINT64_C( 0x000FFFFFFFFFFFFF )))\n";
-  os << "#define rm 1\n";
+  std::random_device rd;  // 随机数种子
+  std::mt19937 gen(rd()); // 梅森旋转算法
+  std::uniform_int_distribution<> dist(0, 3); // 范围 [0, 3]
+
+  int random_number = dist(gen);
+  if (random_number == 0)
+  {
+    os << "#define rm 0\n";
+  }
+  else if (random_number ==1)
+  {
+    os << "#define rm 1\n";
+  }
+  else if (random_number == 2)
+  {
+    os << "#define rm 2\n";
+  }
+  else
+  {
+    os << "#define rm 3\n";
+  }
 }
 
 void Graph::generateData(uint32_t seed) {
