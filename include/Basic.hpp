@@ -138,7 +138,8 @@ enum OperatorAttr : OperatorAttrT {
   TailUndisturbed = 1 << 17,
   MaskAgnostic = 1 << 18,
   MaskUndisturbed = 1 << 19,
-  RoundingMode = 1 << 20,
+  FRM = 1 << 20,
+  VXRM = 1 << 21,
 };
 
 struct OperatorBase : ValueBase {

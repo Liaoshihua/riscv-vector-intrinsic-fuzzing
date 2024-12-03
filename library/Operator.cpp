@@ -212,21 +212,17 @@ void InitializeOp::generateCCode(std::ostream &os) {
 }
 
 static std::string getRawPointerString(std::ostream &os, ValueBase *value,
-                                       bool isWrite = false,
-                                       bool isRM = false) {
+                                       bool isWrite = false) {
   std::string holder = getNewPlaceholderName();
   if (isOneDValue(value))
     os << value->dataTypeID << " *" << holder << " = " << value->id << "; // vector \n";
   else if (isScalarValue(value)) {
     if (isWrite)
       os << value->dataTypeID << " *" << holder << " = &" << value->id << "; // scalar \n";
-    else if (isRM)
-      os << value->dataTypeID << " " << holder << " = " << value->id << "; // Rounding mode \n";
     else
-      os << value->dataTypeID << " " << holder << " = " << value->id << "; // scalr not write \n";
+      os << value->dataTypeID << " " << holder << " = " << value->id << "; // scalar not write \n";
   } else
-    os << "// value->typeID:" << value->typeID;
-    // assert(false); // unreachable
+      assert(false); // unreachable
 
   return holder;
 }
@@ -344,7 +340,7 @@ std::string loadOneDToVector(std::ostream &os, ValueBase *value,
 static void genIntrinsicFuncSuffix(std::ostream &os, OperatorBase *op,
                                    const std::vector<std::string> &args) {
   const OperatorAttrT &opAttr = op->opAttr;
-  if (op->opAttr & RoundingMode)
+  if (op->opAttr & FRM)
     os << "_rm";
   if (isExplicitPolicy(op)) {
     os << "_";
@@ -379,19 +375,29 @@ static void genIntrinsicFuncSuffix(std::ostream &os, OperatorBase *op,
       exit(1);
     }
   }
-  if (op->opAttr & RoundingMode)
-    for (size_t i = 0; i < args.size(); ++i){
-      if (i != args.size() - 1) {
+
+
+  if ((op->opAttr & FRM) || (op->opAttr & VXRM))
+  {
+    for (size_t i = 0; i < args.size() - 1; i++){
         os << args[i] << ", ";
-      }
     }
+  }
   else
+  {
     for (auto arg : args)
+    {
       os << arg << ", ";
+    }
+
+  }
+
 
   if (opAttr & OperatorAttr::HaveVLParameter) {
-    if (op->opAttr & RoundingMode)
-      os << "rm, vl);\n";
+    if (op->opAttr & FRM)
+      os << "frm, vl);\n";
+    else if (op->opAttr & VXRM)
+      os << "vxrm, vl);\n";
     else
       os << "vl);\n";
   } else if (opAttr & OperatorAttr::NoVLParameter)
@@ -1621,7 +1627,7 @@ static void generateOperatorCode(std::ostream &os, OperatorBase *op) {
   if (operandType == "vv" || operandType == "wv" || operandType == "vx" ||
       operandType == "wx" || operandType == "vf" || operandType == "wf") {
     if (op->opAttr & MulAddOperation)
-      if (op->opAttr & RoundingMode)
+      if (op->opAttr & FRM)
         generateMulAddRMOperatorCode(os, op);
       else
         generateMulAddOperatorCode(os, op);

@@ -115,6 +115,11 @@ vv_literal_nonmask_destructive_body = '''
 
 vv_literal_nonmask_destructive_frm_body = '''
   // scripts/VVLiteral.py vv_literal_nonmask_destructive_frm_body
+  // std::cerr << "a->length:" << a -> length << std::endl;
+  // std::cerr << "b->length:" << b -> length << std::endl;
+  // std::cerr << "c->length:" << c -> length << std::endl;
+  // std::cerr << "d->length:" << d -> length << std::endl;
+  // std::cerr << "e->length:" << e -> length << std::endl;
   assert(a->length == b->length && a->length == c->length && a->length == e->length);
 
   auto length = a->length;
@@ -633,7 +638,7 @@ def create_vv_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vv_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_end
-    elif "RoundingMode" in op_attr :
+    elif "VXRM" in op_attr :
       ret += vv_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vv_tama_literal_mask_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vv_literal_mask_body + include_literal("v" + op_id + ".h") + vv_tamu_literal_mask_end
@@ -648,7 +653,7 @@ def create_vv_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
         ret += vv_tu_literal_nonmask_body + include_literal("v" + op_id + ".h") + vv_tu_literal_nonmask_end
     elif "TailAgnostic" in op_attr :
         ret += vv_literal_nonmask_body + include_literal("v" + op_id + ".h") + vv_ta_literal_nonmask_end
-    elif "RoundingMode" in op_attr :
+    elif "VXRM" in op_attr :
         ret += vv_literal_nonmask_xrm_body + include_literal("v" + op_id + ".h") + vv_ta_literal_nonmask_end
     elif "LoadOperation" in op_attr :
         ret += vv_literal_nonmask_load_body + include_literal("v" + op_id + ".h") + vv_literal_nonmask_end
@@ -667,7 +672,7 @@ def create_destructive_vv_op(op_type, op_id, op_attr, output_type, input_num, in
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vv_literal_mask_body_destructive + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_destructive_end
-    elif "RoundingMode" in op_attr :
+    elif "FRM" in op_attr :
       ret += vv_literal_mask_frm_body_destructive + "\t" +include_literal("v" + op_id + ".h") + vv_literal_mask_destructive_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vv_literal_mask_body_destructive + include_literal("v" + op_id + ".h") + vv_tamu_literal_mask_destructive_end
@@ -682,7 +687,7 @@ def create_destructive_vv_op(op_type, op_id, op_attr, output_type, input_num, in
         ret += vv_literal_nonmask_destructive_body + include_literal("v" + op_id + ".h") + vv_tu_literal_nonmask_destructive_end
     elif "TailAgnostic" in op_attr :
         ret += vv_literal_nonmask_destructive_body + include_literal("v" + op_id + ".h") + vv_ta_literal_nonmask_destructive_end
-    elif "RoundingMode" in op_attr:
+    elif "FRM" in op_attr:
         ret += vv_literal_nonmask_destructive_frm_body + include_literal("v" + op_id + ".h") + vv_literal_nonmask_destructive_end
     else :
       ret += vv_literal_nonmask_destructive_body + include_literal("v" + op_id + ".h") + vv_literal_nonmask_destructive_end

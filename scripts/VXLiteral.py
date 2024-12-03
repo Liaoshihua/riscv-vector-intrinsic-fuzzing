@@ -174,7 +174,7 @@ vx_literal_mask_frm_body = '''
   auto dataM = getRawPointer(a);  // mask
   auto dataA = getRawPointer(b);  // vs2
   auto dataB = getRawPointer(c);  //rs1
-  // d means rounding mode
+  // d means frm
   auto dataOut = getRawPointer(e);
 
   auto sew = op->typeInfo->sew.to_int();
@@ -184,9 +184,48 @@ vx_literal_mask_frm_body = '''
     if (dataM[i]) {
 '''
 
-vx_literal_nonmask_xrm_body = '''
-  // script/VXLiteral.py vx_literal_nonmask_xrm_body\n
-  assert(a->length == b->length && a->length == c->length && d->length == 1);
+vx_literal_mask_vxrm_body = '''
+  // script/VXLiteral.py vx_literal_mask_frm_body\n
+  assert(a->length == b->length && c->length == 1 &&
+         a->length == e->length);
+
+  auto length = a->length;
+
+  auto dataM = getRawPointer(a);  // mask
+  auto dataA = getRawPointer(b);  // vs2
+  auto dataB = getRawPointer(c);  //rs1
+  // d means vxrm
+  auto dataOut = getRawPointer(e);
+
+  auto sew = op->typeInfo->sew.to_int();
+  P.VU.vsew = sew;
+
+  for (int i = 0; i < length; ++i) {
+    if (dataM[i]) {
+'''
+
+vx_literal_nonmask_frm_body = '''
+  // script/VXLiteral.py vx_literal_nonmask_frm_body\n
+
+  assert(a->length == d->length == 1 && b->length == 1);
+
+  auto length = a->length;
+
+  auto dataA = getRawPointer(a);
+  auto dataB = getRawPointer(b);
+  // c means frm
+  auto dataOut = getRawPointer(d);
+
+  auto sew = op->typeInfo->sew.to_int();
+  P.VU.vsew = sew;
+
+  for (int i = 0; i < length; ++i) {
+'''
+
+vx_literal_nonmask_vxrm_body = '''
+  // script/VXLiteral.py vx_literal_nonmask_vxrm_body\n
+  // vasub_vx
+  assert(a->length == d->length == 1 && b->length == 1);
 
   auto length = a->length;
 
@@ -329,6 +368,209 @@ vx_literal_mask_frm_destructive_body = '''
 
   for (int i = 0; i < length; ++i) {
     if (dataM[i]) {
+'''
+
+vx_literal_mask_vxrm_destructive_body = '''
+  // vx_literal_mask_vxrm_destructive_body\n
+  assert(a->length == b->length && a->length == d->length &&
+         c->length == 1 && a->length == f->length);
+
+  auto length = a->length;
+
+  auto dataM = getRawPointer(a); // mask
+  auto dataMO = getRawPointer(b);  // default vd
+  auto dataA = getRawPointer(c);  // rs1
+  auto dataB = getRawPointer(d);  // vs2
+  // e means rounding mode
+  auto dataOut = getRawPointer(f); // vd
+
+  auto sew = op->typeInfo->sew.to_int();
+
+  #pragma push_macro("VI_VFP_VF_LOOP")
+  #undef VI_VFP_VF_LOOP
+  #define VI_VFP_VF_LOOP(BODY16, BODY32, BODY64)                               \\
+  RIF::RawDatumOperand vd(dataOut[i]);                                           \\
+  RIF::RawDatumOperand rs1(*dataA);                                            \\
+  RIF::RawDatumOperand vs2(dataB[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  case e64:                                                                    \\
+    BODY64;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  #pragma push_macro("VI_VFP_VF_LOOP_WIDE")
+  #undef VI_VFP_VF_LOOP_WIDE
+  #define VI_VFP_VF_LOOP_WIDE(BODY16, BODY32)                                  \\
+  RIF::RawDatumOperand vd(dataOut[i]);                                           \\
+  RIF::RawDatumOperand rs1(*dataA);                                            \\
+  RIF::RawDatumOperand vs2(dataB[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    vs2 = f16_to_f32(vs2);                                                     \\
+    rs1 = f16_to_f32(rs1);                                                     \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    vs2 = f32_to_f64(vs2);                                                     \\
+    rs1 = f32_to_f64(rs1);                                                     \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  for (int i = 0; i < length; ++i) {
+    if (dataM[i]) {
+'''
+
+vx_literal_nonmask_frm_destructive_body = '''
+  // vx_literal_mask_frm_destructive_body\n
+  // vfwnmsaxvf32vf42rm
+
+  // std::cerr << "a->length:" << a -> length << std::endl;
+  // std::cerr << "b->length:" << b -> length << std::endl;
+  // std::cerr << "c->length:" << c -> length << std::endl;
+  // std::cerr << "d->length:" << d -> length << std::endl;
+  // std::cerr << "e->length:" << e -> length << std::endl;
+  assert(a->length == c->length && b->length == 1 && a->length == e->length);
+
+  auto length = a->length;
+
+  auto dataMO = getRawPointer(a);  // default vd
+  auto dataA = getRawPointer(b);  // rs1
+  auto dataB = getRawPointer(c);  // vs2
+  // d means rounding mode
+  auto dataOut = getRawPointer(e); // vd
+
+  auto sew = op->typeInfo->sew.to_int();
+
+  #pragma push_macro("VI_VFP_VF_LOOP")
+  #undef VI_VFP_VF_LOOP
+  #define VI_VFP_VF_LOOP(BODY16, BODY32, BODY64)                               \\
+  RIF::RawDatumOperand vd(dataOut[i]);                                           \\
+  RIF::RawDatumOperand rs1(*dataA);                                            \\
+  RIF::RawDatumOperand vs2(dataB[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  case e64:                                                                    \\
+    BODY64;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  #pragma push_macro("VI_VFP_VF_LOOP_WIDE")
+  #undef VI_VFP_VF_LOOP_WIDE
+  #define VI_VFP_VF_LOOP_WIDE(BODY16, BODY32)                                  \\
+  RIF::RawDatumOperand vd(dataOut[i]);                                           \\
+  RIF::RawDatumOperand rs1(*dataA);                                            \\
+  RIF::RawDatumOperand vs2(dataB[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    vs2 = f16_to_f32(vs2);                                                     \\
+    rs1 = f16_to_f32(rs1);                                                     \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    vs2 = f32_to_f64(vs2);                                                     \\
+    rs1 = f32_to_f64(rs1);                                                     \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  for (int i = 0; i < length; ++i) {
+'''
+
+vx_literal_nonmask_vxrm_destructive_body = '''
+  // vx_literal_mask_vxrm_destructive_body\n
+  // vfwnmsaxvf32vf42rm
+
+  // std::cerr << "a->length:" << a -> length << std::endl;
+  // std::cerr << "b->length:" << b -> length << std::endl;
+  // std::cerr << "c->length:" << c -> length << std::endl;
+  // std::cerr << "d->length:" << d -> length << std::endl;
+  // std::cerr << "e->length:" << e -> length << std::endl;
+  assert(a->length == c->length && b->length == 1 && a->length == e->length);
+
+  auto length = a->length;
+
+  auto dataMO = getRawPointer(a);  // default vd
+  auto dataA = getRawPointer(b);  // rs1
+  auto dataB = getRawPointer(c);  // vs2
+  // d means rounding mode
+  auto dataOut = getRawPointer(e); // vd
+
+  auto sew = op->typeInfo->sew.to_int();
+
+  #pragma push_macro("VI_VFP_VF_LOOP")
+  #undef VI_VFP_VF_LOOP
+  #define VI_VFP_VF_LOOP(BODY16, BODY32, BODY64)                               \\
+  RIF::RawDatumOperand vd(dataOut[i]);                                           \\
+  RIF::RawDatumOperand rs1(*dataA);                                            \\
+  RIF::RawDatumOperand vs2(dataB[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  case e64:                                                                    \\
+    BODY64;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  #pragma push_macro("VI_VFP_VF_LOOP_WIDE")
+  #undef VI_VFP_VF_LOOP_WIDE
+  #define VI_VFP_VF_LOOP_WIDE(BODY16, BODY32)                                  \\
+  RIF::RawDatumOperand vd(dataOut[i]);                                           \\
+  RIF::RawDatumOperand rs1(*dataA);                                            \\
+  RIF::RawDatumOperand vs2(dataB[i]);                                          \\
+  switch (sew) {                                                               \\
+  case e16:                                                                    \\
+    vs2 = f16_to_f32(vs2);                                                     \\
+    rs1 = f16_to_f32(rs1);                                                     \\
+    BODY16;                                                                    \\
+    break;                                                                     \\
+  case e32:                                                                    \\
+    vs2 = f32_to_f64(vs2);                                                     \\
+    rs1 = f32_to_f64(rs1);                                                     \\
+    BODY32;                                                                    \\
+    break;                                                                     \\
+  default:                                                                     \\
+    assert(0);                                                                 \\
+    break;                                                                     \\
+  }                                                                            \\
+  dataOut[i] = vd;
+
+  for (int i = 0; i < length; ++i) {
 '''
 
 vx_literal_mask_end = '''
@@ -550,8 +792,10 @@ def create_vx_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_end
-    elif "RoundingMode" in op_attr :
+    elif "FRM" in op_attr :
       ret += vx_literal_mask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vx_tama_literal_mask_end
+    elif "VXRM" in op_attr :
+      ret += vx_literal_mask_vxrm_body + "\t" +include_literal("v" + op_id + ".h") + vx_tama_literal_mask_end    
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vx_literal_mask_body + include_literal("v" + op_id + ".h") + vx_tamu_literal_mask_end
     elif "TailUndisturbed" in op_attr and "MaskAgnostic" in op_attr : # tuma
@@ -563,8 +807,10 @@ def create_vx_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
   else :
     if "TailUndisturbed" in op_attr :
       ret += vx_tu_literal_nonmask_body + include_literal("v" + op_id + ".h") + vx_tu_literal_nonmask_end
-    elif "RoundingMode" in op_attr :
-      ret += vx_literal_nonmask_xrm_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_nonmask_end
+    elif "FRM" in op_attr :
+      ret += vx_literal_nonmask_frm_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_nonmask_end
+    elif "VXRM" in op_attr :
+      ret += vx_literal_nonmask_vxrm_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_nonmask_end
     elif "TailAgnostic" in op_attr :
       ret += vx_literal_nonmask_body + include_literal("v" + op_id + ".h") + vx_ta_literal_nonmask_end
     else :
@@ -582,8 +828,10 @@ def create_destructive_vx_op(op_type, op_id, op_attr, output_type, input_num, in
   if "MaskedOperation" in op_attr :
     if "TailAgnostic" in op_attr and "MaskAgnostic" in op_attr : # tama
       ret += vx_literal_mask_destructive_body  + include_literal("v" + op_id + ".h") + vx_tama_literal_mask_destructive_end
-    elif "RoundingMode" in op_attr :
+    elif "FRM" in op_attr :
       ret += vx_literal_mask_frm_destructive_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_mask_destructive_end
+    elif "VXRM" in op_attr :
+      ret += vx_literal_mask_vxrm_destructive_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_mask_destructive_end
     elif "TailAgnostic" in op_attr and "MaskUndisturbed" in op_attr : # tamu
       ret += vx_literal_mask_destructive_body + include_literal("v" + op_id + ".h") + vx_tamu_literal_mask_destructive_end
     elif "TailUndisturbed" in op_attr and "MaskAgnostic" in op_attr : # tuma
@@ -597,6 +845,10 @@ def create_destructive_vx_op(op_type, op_id, op_attr, output_type, input_num, in
       ret += vx_literal_nonmask_destructive_body + include_literal("v" + op_id + ".h") + vx_tu_literal_nonmask_destructive_end
     elif "TailAgnostic" in op_attr :
       ret += vx_literal_nonmask_destructive_body + include_literal("v" + op_id + ".h") + vx_ta_literal_nonmask_destructive_end
+    elif "FRM" in op_attr :
+      ret += vx_literal_nonmask_frm_destructive_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_nonmask_destructive_end    
+    elif "VXRM" in op_attr :
+      ret += vx_literal_nonmask_vxrm_destructive_body + "\t" +include_literal("v" + op_id + ".h") + vx_literal_nonmask_destructive_end    
     else :
       ret += vx_literal_nonmask_destructive_body + include_literal("v" + op_id + ".h") + vx_literal_nonmask_destructive_end
   return ret
