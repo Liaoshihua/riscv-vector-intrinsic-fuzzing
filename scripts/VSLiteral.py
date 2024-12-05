@@ -33,11 +33,10 @@ vs_ta_literal_nonmask_reduction_body = '''
 
   auto dataA = getRawPointer(a);  // vs2
   auto dataB = getRawPointer(b);  // vs1
-  auto dataOut = getRawPointer(b); // vd
+  auto dataOut = getRawPointer(c); // vd
 
   auto sew = op->typeInfo->sew.to_int();
   dataOut[0] = dataB[0];
-  auto &vd_0_res = *dataOut;
   for (int i = 0; i < length; ++i) {
 '''
 
@@ -122,7 +121,7 @@ vs_literal_nonmask_end = '''
 vs_ta_literal_nonmask_end = '''
   printf("reduction dataA[%d]:%d\\n", i, dataA[i]);
   printf("reduction dataB[%d]:%d\\n", i, dataB[i]);
-  printf("reduction dataOut[%d]:%d\\n", i, dataOut[i]);
+  printf("reduction dataOut[%d]:%d\\n", i, dataOut[0]);
   }
   for (int i = 1; i < length; ++i) {
     memset(&dataOut[i], 0xff, sizeof(dataOut[i]));
