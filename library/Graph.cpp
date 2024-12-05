@@ -370,7 +370,6 @@ void Graph::generateCCode(std::ostream &os, uint32_t seed) {
   os << "int ret = 1; // 1 = success\n";
   for (auto id : ordering) {
     auto op = operatorLUT[id];
-    os << "// operatorLUT[id] = " << operatorLUT[id] << "\n";
     os << "ret &= golden_" << op->getNameWithType() << "();\n";
   }
   os << "if (!ret) return 1;\n";

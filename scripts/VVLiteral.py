@@ -16,6 +16,24 @@ vv_literal_nonmask_body = '''
   for (int i = 0; i < length; ++i) {
 '''
 
+vv_literal_nonmask_frm_body = '''
+// scripts/VVLiteral.py vv_literal_nonmask_frm_body
+  assert(a->length == b->length && a->length == d->length);
+
+  auto length = a->length;
+
+  auto dataA = getRawPointer(a);
+  auto dataB = getRawPointer(b);
+  // c means frm
+  auto dataOut = getRawPointer(c);
+
+  auto sew = op->typeInfo->sew.to_int();
+  auto dataASew = a->typeInfo->sew.to_int(); // for index load / store only
+  P.VU.vsew = sew;
+
+  for (int i = 0; i < length; ++i) {
+'''
+
 vv_literal_nonmask_load_body = '''
   // script/VVLiteral.py vv_literal_nonmask_load_body
   assert(a->length == 1 && b->length == c->length);
@@ -515,6 +533,8 @@ vv_tumu_literal_mask_destructive_end = '''
 '''
 
 vv_literal_masked_no_maskedoff_body = '''
+  // scripts/VVLiteral.py vv_literal_masked_no_maskedoff_body
+  assert(a->length == b->length && a->length == c->length && a->length == d->length);
   auto length = a->length;
 
   auto dataM = getRawPointer(a);
@@ -528,6 +548,28 @@ vv_literal_masked_no_maskedoff_body = '''
 
   for (int i = 0; i < length; ++i) {
     if (dataM[i]) {
+      // printf("dataA[%d]:%d", i, dataA[i]);
+      // printf("dataB[%d]:%d", i, dataB[i]);
+'''
+
+vv_literal_masked_no_maskedoff_load_body = '''
+  // scripts/VVLiteral.py vv_literal_masked_no_maskedoff_load_body
+  assert(a->length == c->length && a->length == d->length);
+  auto length = a->length;
+
+  auto dataM = getRawPointer(a);
+  auto dataA = getRawPointer(b);
+  auto dataB = getRawPointer(c);
+  auto dataOut = getRawPointer(d);
+
+  auto sew = op->typeInfo->sew.to_int();
+  auto dataASew = b->typeInfo->sew.to_int(); // for index load / store only
+  P.VU.vsew = sew;
+
+  for (int i = 0; i < length; ++i) {
+    if (dataM[i]) {
+      // printf("dataA[%d]:%d", i, dataA[i]);
+      // printf("dataB[%d]:%d", i, dataB[i]);
 '''
 
 vv_mu_literal_masked_no_maskedoff_body = '''
@@ -567,6 +609,10 @@ vv_ma_literal_masked_no_masked_off_end = '''
     } else { // maskedoff element is agnostic
       memset(&dataOut[i], 0xff, sizeof(dataOut[i]));
     }
+    printf("dataM[%d] : %d\\n", i, dataM[i]);
+    printf("dataA[%d] : %d\\n", i, dataA[i]);
+    printf("dataB[%d] : %d\\n", i, dataB[i]);
+    printf("dataOut[%d] : %d\\n", i, dataOut[i]);
   }
 }
 '''
@@ -581,12 +627,19 @@ vv_mu_literal_masked_no_masked_off_end = '''
 
 vv_tama_literal_mask_end = '''
     } else { // maskedoff element is agnostic
+      printf("vor i: %d\\n", i);
       memset(&dataOut[i], 0xff, sizeof(dataOut[i]));
+      printf("vor dataOut[%d]: %d\\n", i, dataOut[i]);
     }
   }
   for (int i = 0; i < length; ++i) {
     if (i & 1) // tail element is agnostic
       memset(&dataOut[i], 0xff, sizeof(dataOut[i]));
+      printf("vor size of dataOut: %d\\n", sizeof(dataOut[i]));
+      printf("vor dataM[%d] : %d\\n", i, dataM[i]);
+      printf("vor dataA[%d] : %d\\n", i, dataA[i]);
+      printf("vor dataB[%d] : %d\\n", i, dataB[i]);
+      printf("vor dataOut[%d] : %d\\n", i, dataOut[i]);
   }
 }
 '''
@@ -646,8 +699,10 @@ def create_vv_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
       ret += vv_literal_mask_body + include_literal("v" + op_id + ".h") + vv_tuma_literal_mask_end
     elif "TailUndisturbed" in op_attr and "MaskUndisturbed" in op_attr : # tumu
       ret += vv_literal_mask_body + include_literal("v" + op_id + ".h") + vv_tumu_literal_mask_end
+    elif "LoadOperation" in op_attr:
+      ret += vv_literal_masked_no_maskedoff_load_body + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_end
     else : # No explicit policy specified
-      ret += vv_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vv_tama_literal_mask_end
+      ret += vv_literal_masked_no_maskedoff_body + include_literal("v" + op_id + ".h") + vv_ma_literal_masked_no_masked_off_end
   else :
     if "TailUndisturbed" in op_attr :
         ret += vv_tu_literal_nonmask_body + include_literal("v" + op_id + ".h") + vv_tu_literal_nonmask_end
@@ -657,6 +712,8 @@ def create_vv_op(op_type, op_id, op_attr, output_type, input_num, input_types) :
         ret += vv_literal_nonmask_xrm_body + include_literal("v" + op_id + ".h") + vv_ta_literal_nonmask_end
     elif "LoadOperation" in op_attr :
         ret += vv_literal_nonmask_load_body + include_literal("v" + op_id + ".h") + vv_literal_nonmask_end
+    elif "FRM" in op_attr :
+        ret += vv_literal_nonmask_frm_body + include_literal("v" + op_id + ".h") + vv_literal_nonmask_end
     else :
       ret += vv_literal_nonmask_body + include_literal("v" + op_id + ".h") + vv_literal_nonmask_end
   return ret
