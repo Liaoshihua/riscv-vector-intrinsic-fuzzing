@@ -219,7 +219,7 @@ ValueBase *getVs1(OperatorBase *op) {
       vs1 = hasTU(op) ? op->inputs[3] : op->inputs[2];
     } else
       vs1 = hasMask(op)
-                ? (op->opAttr & NoMaskedOff ? op->inputs[2] : op->inputs[3])
+                ? (op->opAttr & NoMaskedOff ? op->inputs[1] : op->inputs[2])
             : hasTU(op) ? op->inputs[2]
                         : op->inputs[1];
   }
