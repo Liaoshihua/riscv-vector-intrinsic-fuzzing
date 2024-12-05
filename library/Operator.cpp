@@ -327,7 +327,7 @@ std::string loadOneDToVector(std::ostream &os, ValueBase *value,
     os << "vint8" << lmulStr << "_t " << vecHolder << " = __riscv_vle8_v_i8" << lmulStr
        << "(" << holder << ", vl);\n";
     os << "\tvbool" << booleanSew << "_t " << resultVec << " = __riscv_vmseq_vx_i8"
-       << lmulStr << "_b" << booleanSew << "(" << vecHolder << ", 0, vl);\n";
+       << lmulStr << "_b" << booleanSew << "(" << vecHolder << ", 1, vl);\n";
   } else { // normal
     resultVec = getUniqueName("vec_" + value->id);
     os << "\t" << typeInfo.vectorTypeName << " " << resultVec << " = __riscv_vle"
