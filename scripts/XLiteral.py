@@ -1,7 +1,7 @@
 x_literal_start0 = "void compute"
 x_literal_start1 = "Op(RIF::OperatorBase *op) {\n"
 x_literal_nonmask_body = '''
-   // script/XLiteral.py x_literal_nonmask_body
+   // scripts/XLiteral.py x_literal_nonmask_body
   auto length = b->length;
 
   auto dataA = getRawPointer(a);
@@ -21,7 +21,7 @@ x_literal_nonmask_body = '''
 '''
 
 x_literal_nonmask_mv_body = '''
-   // script/XLiteral.py x_literal_nonmask_mv_body
+   // scripts/XLiteral.py x_literal_nonmask_mv_body
   auto length = a->length;
 
   auto dataA = getRawPointer(a);
@@ -32,7 +32,7 @@ x_literal_nonmask_mv_body = '''
   #pragma push_macro("VI_VF_MERGE_LOOP")
   #undef VI_VF_MERGE_LOOP
   #define VI_VF_MERGE_LOOP(BODY)                                               \\
-  RIF::RawDatumOperand vs1(dataA[i]);                                            \\
+  RIF::RawDatumOperand rs1(dataA[i]);                                            \\
   RIF::RawDatumOperand vd;                                                     \\
   BODY                                                                         \\
   dataOut[i] = vd;
