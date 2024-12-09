@@ -567,7 +567,8 @@ std::vector<std::string> CodeGenForOperator::getIntrinsicArguments() {
     if (isOneDValue(value)) {
       std::string loadVec = loadOneDToVector(os, value, rawID, op);
       ret.push_back(loadVec);
-    } else {
+    }
+    else {
       ret.push_back(rawID);
     }
   }

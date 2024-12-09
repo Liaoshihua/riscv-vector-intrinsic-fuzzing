@@ -623,9 +623,7 @@ vv_mu_literal_masked_no_masked_off_end = '''
 
 vv_tama_literal_mask_end = '''
     } else { // maskedoff element is agnostic
-      printf("vor i: %d\\n", i);
       memset(&dataOut[i], 0xff, sizeof(dataOut[i]));
-      printf("vor dataOut[%d]: %d\\n", i, dataOut[i]);
     }
   }
   for (int i = 0; i < length; ++i) {
