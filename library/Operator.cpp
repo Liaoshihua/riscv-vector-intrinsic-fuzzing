@@ -93,13 +93,16 @@ void generateOneDInitCCode(std::ostream &os, ValueBase *value,
   os << "for (int i=0; i<" << length << ";++i) {\n";
   if (!isIntegral(value->dt)) {
     if (value->dt == DataTypeEnum::Float16_t) {
-      os << "union { \n\tuint16_t u16; \n\t" << dataType << " f; } converter;\n";
+      os << "union { \n\tuint16_t u16; \n\t" << dataType
+         << " f; } converter;\n";
       os << "converter.u16 = tmp[i];\n";
     } else if (value->dt == DataTypeEnum::Float32_t) {
-      os << "union { \n\tuint32_t u32; \n\t" << dataType << " f; } converter;\n";
+      os << "union { \n\tuint32_t u32; \n\t" << dataType
+         << " f; } converter;\n";
       os << "converter.u32 = tmp[i];\n";
     } else if (value->dt == DataTypeEnum::Float64_t) {
-      os << "union { \n\tuint64_t u64; \n\t" << dataType << " f; } converter;\n";
+      os << "union { \n\tuint64_t u64; \n\t" << dataType
+         << " f; } converter;\n";
       os << "converter.u64 = tmp[i];\n";
     } else {
       assert(false && "Unhandled type");
@@ -183,28 +186,20 @@ void generateScalarInitCCode(std::ostream &os, ValueBase *value,
 
 template <typename T>
 void generateScalarFRMCCode(std::ostream &os, ValueBase *value,
-                             const std::string &dataType) {
+                            const std::string &dataType) {
   auto scalar = static_cast<T *>(value);
   assert(scalar->length == 1);
-  auto raw = scalar->raw;;
-  if (*raw % 5 == 0)
-  {
-    os << "#define frm 0\n"; 
-  }
-  else if (*raw % 5 == 1)
-  {
+  auto raw = scalar->raw;
+  ;
+  if (*raw % 5 == 0) {
+    os << "#define frm 0\n";
+  } else if (*raw % 5 == 1) {
     os << "#define frm 1\n";
-  }
-  else if (*raw % 5 == 2)
-  {
+  } else if (*raw % 5 == 2) {
     os << "#define frm 2\n";
-  }
-  else if (*raw % 5 == 3)
-  {
+  } else if (*raw % 5 == 3) {
     os << "#define frm 3\n";
-  }
-  else
-  {
+  } else {
     os << "#define frm 4\n";
   }
 }
@@ -214,21 +209,15 @@ void generateScalarVXRMCCode(std::ostream &os, ValueBase *value,
                              const std::string &dataType) {
   auto scalar = static_cast<T *>(value);
   assert(scalar->length == 1);
-  auto raw = scalar->raw;;
-  if (*raw % 4 == 0)
-  {
-    os << "#define vxrm 0\n"; 
-  }
-  else if (*raw % 4 == 1)
-  {
+  auto raw = scalar->raw;
+  ;
+  if (*raw % 4 == 0) {
+    os << "#define vxrm 0\n";
+  } else if (*raw % 4 == 1) {
     os << "#define vxrm 1\n";
-  }
-  else if (*raw % 4 == 2)
-  {
+  } else if (*raw % 4 == 2) {
     os << "#define vxrm 2\n";
-  }
-  else
-  {
+  } else {
     os << "#define vxrm 3\n";
   }
 }
@@ -249,13 +238,14 @@ void InitializeOp::generateCCode(std::ostream &os) {
 #define CUSTOM_SCALAR_TYPE(CUSTOM_NAME, DATA_TYPE, DATA_WIDTH, DATA_CLASS,     \
                            MIN_VALUE, MAX_VALUE)                               \
   if (value->type == CustomValType::Scalar##CUSTOM_NAME) {                     \
-    if (CUSTOM_NAME == UIntStatus){                                          \
-      generateScalarFRMCCode<Scalar##CUSTOM_NAME##Val>(os, value, #DATA_TYPE);  \
-      generateScalarVXRMCCode<Scalar##CUSTOM_NAME##Val>(os, value, #DATA_TYPE); \
+    if (CUSTOM_NAME == UIntStatus) {                                           \
+      generateScalarFRMCCode<Scalar##CUSTOM_NAME##Val>(os, value, #DATA_TYPE); \
+      generateScalarVXRMCCode<Scalar##CUSTOM_NAME##Val>(os, value,             \
+                                                        #DATA_TYPE);           \
       ++trigger;                                                               \
-      }                                                                        \
-    else{                                                                      \
-      generateScalarInitCCode<Scalar##CUSTOM_NAME##Val>(os, value, #DATA_TYPE);\
+    } else {                                                                   \
+      generateScalarInitCCode<Scalar##CUSTOM_NAME##Val>(os, value,             \
+                                                        #DATA_TYPE);           \
       ++trigger;                                                               \
     }                                                                          \
   }
@@ -441,31 +431,23 @@ static void genIntrinsicFuncSuffix(std::ostream &os, OperatorBase *op,
     }
   }
 
-  if ((op->opAttr & FRM) || (op->opAttr & VXRM)) 
-  {
-    for (size_t i = 0; i < args.size() - 1; i++) 
-    {
+  if ((op->opAttr & FRM) || (op->opAttr & VXRM)) {
+    for (size_t i = 0; i < args.size() - 1; i++) {
       os << args[i] << ", ";
     }
-    if (op->opAttr & FRM)
-    {
+    if (op->opAttr & FRM) {
       os << "frm, ";
-    }
-    else if (op->opAttr & VXRM)
-    {
+    } else if (op->opAttr & VXRM) {
       os << "vxrm, ";
     }
-  } 
-  else 
-  {
-    for (auto arg : args) 
-    {
+  } else {
+    for (auto arg : args) {
       os << arg << ", ";
     }
   }
 
-  if (opAttr & OperatorAttr::HaveVLParameter){
-      os << "vl);\n";
+  if (opAttr & OperatorAttr::HaveVLParameter) {
+    os << "vl);\n";
   } else if (opAttr & OperatorAttr::NoVLParameter)
     os << ");\n";
   else {

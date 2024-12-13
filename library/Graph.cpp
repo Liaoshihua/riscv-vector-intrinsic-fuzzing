@@ -231,8 +231,8 @@ void Graph::emitHeader(std::ostream &os) {
   os << "#define isNaNF64UI( a ) (((~(a) & UINT64_C( 0x7FF0000000000000 )) == "
         "0) && ((a) & UINT64_C( 0x000FFFFFFFFFFFFF )))\n";
   // std::random_device rd;                       // ramdom seed
-  // std::mt19937 gen(rd());                      // Pseudorandom number generator
-  // std::uniform_int_distribution<> dist(0, 19); // scale [0, 19]
+  // std::mt19937 gen(rd());                      // Pseudorandom number
+  // generator std::uniform_int_distribution<> dist(0, 19); // scale [0, 19]
 
   // can't find how to pass this number to rif
   // int random_number = dist(gen);

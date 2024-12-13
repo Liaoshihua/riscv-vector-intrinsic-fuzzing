@@ -178,7 +178,7 @@ ValueBase *getVs2(OperatorBase *op) {
 ValueBase *getFrm(OperatorBase *op) {
   ValueBase *frm = nullptr;
   if (op->opAttr & FRM)
-    frm = op->inputs[sizeof(op->inputs)-1];
+    frm = op->inputs[sizeof(op->inputs) - 1];
   return frm;
 }
 
