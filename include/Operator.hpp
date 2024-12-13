@@ -55,10 +55,12 @@ ValueBase *getMaskedoff(OperatorBase *op);
 ValueBase *getVs2(OperatorBase *op);
 bool isExistVs1Rs1(OperatorBase *op);
 ValueBase *getVs1(OperatorBase *op);
+ValueBase *getFrm(OperatorBase *op);
 bool isMaskOfOperator(OperatorBase *op, ValueBase *value);
 bool isMaskedoffOfOperator(OperatorBase *op, ValueBase *value);
 bool isVs2OfOperator(OperatorBase *op, ValueBase *value);
 bool isVs1OfOperator(OperatorBase *op, ValueBase *value);
+bool isFrmOfOperator(OperatorBase *op, ValueBase *value);
 bool isWideningOperator(OperatorBase *op);
 bool isWideningValue(ValueBase *x, ValueBase *y);
 bool isNarrowingOperator(OperatorBase *op);
@@ -80,7 +82,6 @@ struct CodeGenForOperator {
   OperatorBase *op;
   TypeInfo vlTypeInfo;
   size_t loopLength;
-
   // Loads raw data into pointer placeholders. The names of generated
   // placeholders are stored in `opInputs` and opOutput.
   std::vector<ValuePair> opInputs;

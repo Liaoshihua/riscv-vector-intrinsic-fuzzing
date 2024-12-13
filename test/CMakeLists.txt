@@ -200,11 +200,11 @@ add_test(
                   --has-policy
 )
 
-set(GCC_TOOLCHAIN_PREFIX "/sifive/tools/riscv-tools/riscv64-unknown-linux-gnu-toolsuite-13.0.0-2021.11.5-x86_64-linux-redhat8")
-set(COMPILER_TOOLCHAIN_PREFIX "/sifive/tools/riscv-tools/riscv64-unknown-linux-gnu-toolsuite-13.0.0-2021.11.5-x86_64-linux-redhat8")
+set(GCC_TOOLCHAIN_PREFIX "/home/xyenchi/dragon/riscv-gnu-toolchain/rif")
+set(COMPILER_TOOLCHAIN_PREFIX "/home/xyenchi/dragon/riscv-gnu-toolchain/rif")
 set(FUZZ 1)
 set(NODE 20)
-set(LENGTH 500)
+set(LENGTH 50)
 set(ENABLE_FUSED_GEN 1)
 set(RANDOM_OR_SEED "--random on")
 if(DEFINED ENV{GCC_TOOLCHAIN_PREFIX})
@@ -243,11 +243,11 @@ set(CLANG "${COMPILER_TOOLCHAIN_PREFIX}/bin/riscv64-unknown-linux-gnu-clang")
 set(CFLAGS "-target riscv64-unknown-linux-gnu --sysroot ${SYSROOT} --gcc-toolchain=${GCC_TOOLCHAIN_PREFIX}")
 set(POLICY_ENABLE "")
 
-execute_process(
-  COMMAND
-  bash -c "${CLANG} ${CFLAGS} -march=rv64gcv_zfh_zvfh0p1 -menable-experimental-extensions -c ${CMAKE_SOURCE_DIR}/test/codegen-golden/AddVV8VInt8TA.c"
-  RESULT_VARIABLE OK
-)
+# execute_process(
+#   COMMAND
+#   bash -c "${CLANG} ${CFLAGS} -march=rv64gcv_zfh_zvfh -menable-experimental-extensions -c ${CMAKE_SOURCE_DIR}/test/codegen-golden/AddVV8VInt8TA.c"
+#   RESULT_VARIABLE OK
+# )
 
 if("${OK}" STREQUAL "0")
   set(POLICY_ENABLE "--has-policy")
@@ -258,7 +258,7 @@ foreach(count RANGE 1 ${FUZZ})
     NAME Test.FuzzTestRandomGen${count}
     COMMAND
     sh -c "rm -rf fuzz_test_random_gen${count} && mkdir fuzz_test_random_gen${count} && cd fuzz_test_random_gen${count} && \
-    ${CMAKE_SOURCE_DIR}/rif-test --gen-path ${CMAKE_BINARY_DIR}/tool --sim ${CMAKE_SOURCE_DIR}/prebuilt/metal-run/qemu-run --cc ${CLANG} --arch rv64gcv_zfh_zvfh0p1 --cflags \"${CFLAGS}\" ${POLICY_ENABLE} --node ${NODE} --length ${LENGTH} ${RANDOM_OR_SEED} && \
+    ${CMAKE_SOURCE_DIR}/rif-test --gen-path ${CMAKE_BINARY_DIR}/tool --sim ${GCC_TOOLCHAIN_PREFIX}/bin/qemu-riscv64 --cc ${CLANG} --arch rv64gcv_zfh_zvfh --cflags \"${CFLAGS}\" ${POLICY_ENABLE} --node ${NODE} --length ${LENGTH} ${RANDOM_OR_SEED} && \
     make -j$(nproc)"
   )
 endforeach()
@@ -269,7 +269,7 @@ if("${ENABLE_FUSED_GEN}" STREQUAL "1")
       NAME Test.FuzzTestFusedGen${count}
       COMMAND
       sh -c "rm -rf fuzz_test_fused_gen${count} && mkdir fuzz_test_fused_gen${count} && cd fuzz_test_fused_gen${count} && \
-      ${CMAKE_SOURCE_DIR}/rif-test --gen fused_gen --gen-path ${CMAKE_BINARY_DIR}/tool --sim ${CMAKE_SOURCE_DIR}/prebuilt/metal-run/qemu-run --cc ${CLANG} --arch rv64gcv_zfh_zvfh0p1 --cflags \"${CFLAGS}\" ${POLICY_ENABLE} --node ${NODE} --length ${LENGTH} ${RANDOM_OR_SEED} && \
+      ${CMAKE_SOURCE_DIR}/rif-test --gen fused_gen --gen-path ${CMAKE_BINARY_DIR}/tool --sim ${GCC_TOOLCHAIN_PREFIX}/bin/qemu-riscv64 --cc ${CLANG} --arch rv64gcv_zfh_zvfh --cflags \"${CFLAGS}\" ${POLICY_ENABLE} --node ${NODE} --length ${LENGTH} ${RANDOM_OR_SEED} && \
       make -j$(nproc)"
     )
   endforeach()

@@ -175,13 +175,12 @@ ValueBase *getVs2(OperatorBase *op) {
   return vs2;
 }
 
-// todo: random csr
-// ValueBase *getRM(OperatorBase *op) {
-//   ValueBase *rm = nullptr;
-//   if (op->opAttr & RoundingMode)
-//     rm = op->inputs[sizeof(op->inputs)-1];
-//   return rm;
-// }
+ValueBase *getFrm(OperatorBase *op) {
+  ValueBase *frm = nullptr;
+  if (op->opAttr & FRM)
+    frm = op->inputs[sizeof(op->inputs)-1];
+  return frm;
+}
 
 bool isExistVs1Rs1(OperatorBase *op) {
   std::string typeID = op->typeID;
@@ -236,6 +235,10 @@ bool isVs2OfOperator(OperatorBase *op, ValueBase *value) {
 
 bool isVs1OfOperator(OperatorBase *op, ValueBase *value) {
   return getVs1(op) == value;
+}
+
+bool isFrmOfOperator(OperatorBase *op, ValueBase *value) {
+  return getFrm(op) == value;
 }
 
 void initializeLmul(OperatorBase *op) {

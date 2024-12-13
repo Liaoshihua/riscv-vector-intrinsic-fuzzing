@@ -24,8 +24,8 @@ vv_literal_nonmask_frm_body = '''
 
   auto dataA = getRawPointer(a);
   auto dataB = getRawPointer(b);
-  // c means frm
-  auto dataOut = getRawPointer(c);
+  auto dataC = getRawPointer(c);// c means frm
+  auto dataOut = getRawPointer(d);
 
   auto sew = op->typeInfo->sew.to_int();
   auto dataASew = a->typeInfo->sew.to_int(); // for index load / store only
@@ -145,6 +145,7 @@ vv_literal_nonmask_destructive_frm_body = '''
   auto dataA = getRawPointer(a);
   auto dataB = getRawPointer(b);
   auto dataC = getRawPointer(c);
+  auto dataD = getRawPointer(d); // d means rounding mode
   auto dataOut = getRawPointer(e);
 
   auto sew = op->typeInfo->sew.to_int();
@@ -261,7 +262,7 @@ vv_literal_mask_frm_body = '''
   auto dataM = getRawPointer(a);  // mask
   auto dataA = getRawPointer(b);   // operand 1
   auto dataB = getRawPointer(c);   // operand 2
-  // d means frm
+  auto dataC = getRawPointer(d);// d means frm
   auto dataOut = getRawPointer(e);   // result
 
   auto sew = op->typeInfo->sew.to_int();
@@ -318,7 +319,7 @@ vv_literal_mask_body_destructive = '''
   auto length = a->length;
 
   auto dataM = getRawPointer(a);
-  auto dataMO = getRawPointer(b);
+  // auto dataMO = getRawPointer(b);
   auto dataA = getRawPointer(b);
   auto dataB = getRawPointer(c);
   auto dataC = getRawPointer(d);
@@ -384,11 +385,11 @@ vv_literal_mask_frm_body_destructive = '''
   auto length = a->length;
 
   auto dataM = getRawPointer(a);  //  mask
-  auto dataMO = getRawPointer(b);  //  default vd
+  // auto dataMO = getRawPointer(b);  //  default vd
   auto dataA = getRawPointer(b);  //  default vd
   auto dataB = getRawPointer(c);  // operand 1
   auto dataC = getRawPointer(d);  //  operand 2
-  // e means frm
+  auto dataD = getRawPointer(e);  // e means frm
   auto dataOut = getRawPointer(f);  // vd
 
   auto sew = op->typeInfo->sew.to_int();
@@ -462,18 +463,18 @@ vv_ta_literal_mask_end = '''
 
 vv_tu_literal_mask_end = '''
     } else
-      dataOut[i] = dataMO[i];
+      dataOut[i] = dataA[i];
   }
   auto half = length / 2;
   for (int i = half; i < length; ++i) {
-    dataOut[i] = dataMO[i];
+    dataOut[i] = dataA[i];
   }
 }
 '''
 
 vv_literal_mask_destructive_end = '''
     } else
-      dataOut[i] = dataMO[i];
+      dataOut[i] = dataA[i];
   }
   #pragma pop_macro("VI_VFP_VV_LOOP")
   #pragma pop_macro("VI_VFP_VV_LOOP_WIDE")
@@ -548,8 +549,6 @@ vv_literal_masked_no_maskedoff_body = '''
 
   for (int i = 0; i < length; ++i) {
     if (dataM[i]) {
-      // printf("dataA[%d]:%d", i, dataA[i]);
-      // printf("dataB[%d]:%d", i, dataB[i]);
 '''
 
 vv_literal_masked_no_maskedoff_load_body = '''
@@ -568,8 +567,6 @@ vv_literal_masked_no_maskedoff_load_body = '''
 
   for (int i = 0; i < length; ++i) {
     if (dataM[i]) {
-      // printf("dataA[%d]:%d", i, dataA[i]);
-      // printf("dataB[%d]:%d", i, dataB[i]);
 '''
 
 vv_mu_literal_masked_no_maskedoff_body = '''

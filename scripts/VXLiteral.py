@@ -174,7 +174,7 @@ vx_literal_mask_frm_body = '''
   auto dataM = getRawPointer(a);  // mask
   auto dataA = getRawPointer(b);  // vs2
   auto dataB = getRawPointer(c);  //rs1
-  // d means frm
+  auto dataC = getRawPointer(d); // d means frm
   auto dataOut = getRawPointer(e);
 
   auto sew = op->typeInfo->sew.to_int();
@@ -194,7 +194,7 @@ vx_literal_mask_vxrm_body = '''
   auto dataM = getRawPointer(a);  // mask
   auto dataA = getRawPointer(b);  // vs2
   auto dataB = getRawPointer(c);  //rs1
-  // d means vxrm
+  auto dataC = getRawPointer(d);  // dateaC means vxrm
   auto dataOut = getRawPointer(e);
 
   auto sew = op->typeInfo->sew.to_int();
@@ -213,7 +213,7 @@ vx_literal_nonmask_frm_body = '''
 
   auto dataA = getRawPointer(a);
   auto dataB = getRawPointer(b);
-  // c means frm
+  auto dataC = getRawPointer(c);// c means frm
   auto dataOut = getRawPointer(d);
 
   auto sew = op->typeInfo->sew.to_int();
@@ -231,7 +231,7 @@ vx_literal_nonmask_vxrm_body = '''
 
   auto dataA = getRawPointer(a);
   auto dataB = getRawPointer(b);
-  // c means vxrm
+  auto dataC = getRawPointer(c);// c means vxrm
   auto dataOut = getRawPointer(d);
 
   auto sew = op->typeInfo->sew.to_int();
@@ -316,7 +316,7 @@ vx_literal_mask_frm_destructive_body = '''
   auto dataMO = getRawPointer(b);  // default vd
   auto dataA = getRawPointer(c);  // rs1
   auto dataB = getRawPointer(d);  // vs2
-  // e means rounding mode
+  auto dataC = getRawPointer(e);  // dataC e means rounding mode
   auto dataOut = getRawPointer(f); // vd
 
   auto sew = op->typeInfo->sew.to_int();
@@ -381,7 +381,7 @@ vx_literal_mask_vxrm_destructive_body = '''
   auto dataMO = getRawPointer(b);  // default vd
   auto dataA = getRawPointer(c);  // rs1
   auto dataB = getRawPointer(d);  // vs2
-  // e means rounding mode
+  auto dataC = getRawPointer(c);   // e means rounding mode
   auto dataOut = getRawPointer(f); // vd
 
   auto sew = op->typeInfo->sew.to_int();
@@ -451,7 +451,7 @@ vx_literal_nonmask_frm_destructive_body = '''
   auto dataMO = getRawPointer(a);  // default vd
   auto dataA = getRawPointer(b);  // rs1
   auto dataB = getRawPointer(c);  // vs2
-  // d means rounding mode
+  auto dataC = getRawPointer(d);  // d means rounding mode
   auto dataOut = getRawPointer(e); // vd
 
   auto sew = op->typeInfo->sew.to_int();
@@ -520,7 +520,7 @@ vx_literal_nonmask_vxrm_destructive_body = '''
   auto dataMO = getRawPointer(a);  // default vd
   auto dataA = getRawPointer(b);  // rs1
   auto dataB = getRawPointer(c);  // vs2
-  // d means rounding mode
+  auto dataC = getRawPointer(d);  // d means rounding mode
   auto dataOut = getRawPointer(e); // vd
 
   auto sew = op->typeInfo->sew.to_int();

@@ -47,7 +47,7 @@ vs_literal_nonmask_reduction_frm_body = '''
 
   auto dataA = getRawPointer(a);  // vs1
   auto dataB = getRawPointer(b);  // vs2
-  // c means frm
+  auto dataC = getRawPointer(c); // c means frm
   auto dataOut = getRawPointer(d); // vd
 
   auto sew = op->typeInfo->sew.to_int();
@@ -86,7 +86,7 @@ vs_mask_reduction_frm_body = '''
   auto dataM = getRawPointer(a);  // mask
   auto dataA = getRawPointer(b);  // vs2
   auto dataB = getRawPointer(c);  // vs1
-  // d means frm
+  auto dataC = getRawPointer(d);  // d means frm
   auto dataOut = getRawPointer(e);  // vd
 
   auto sew = op->typeInfo->sew.to_int();
@@ -161,7 +161,7 @@ vs_literal_mask_frm_body = '''
   auto dataM = getRawPointer(a);  // mask
   auto dataA = getRawPointer(b);   // operand 1
   auto dataB = getRawPointer(c);   // operand 2
-  // d means frm
+  auto dataC = getRawPointer(d);   // d means frm
   auto dataOut = getRawPointer(e);   // result
 
   auto sew = op->typeInfo->sew.to_int();
@@ -183,7 +183,7 @@ vs_literal_mask_vxrm_body = '''
   auto dataM = getRawPointer(a);  // mask
   auto dataA = getRawPointer(b);   // operand 1
   auto dataB = getRawPointer(c);   // operand 2
-  // d means frm
+  auto dataC = getRawPointer(d);   // d means frm
   auto dataOut = getRawPointer(e);   // result
 
   auto sew = op->typeInfo->sew.to_int();

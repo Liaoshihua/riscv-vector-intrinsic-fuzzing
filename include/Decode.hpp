@@ -397,7 +397,6 @@ inline float64_t f64(uint64_t v) { return {v}; }
                                 F64_SIGN))
 
 #define VI_VFP_V_LOOP(BODY16, BODY32, BODY64)                                  \
-  RIF::RawDatumOperand vs(dataA[i]);                                           \
   RIF::RawDatumOperand vs2(dataA[i]);                                          \
   RIF::RawDatumOperand vd;                                                     \
   switch (sew) {                                                               \

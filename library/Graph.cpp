@@ -230,33 +230,34 @@ void Graph::emitHeader(std::ostream &os) {
         "0x007FFFFF))\n";
   os << "#define isNaNF64UI( a ) (((~(a) & UINT64_C( 0x7FF0000000000000 )) == "
         "0) && ((a) & UINT64_C( 0x000FFFFFFFFFFFFF )))\n";
-  std::random_device rd;                       // ramdom seed
-  std::mt19937 gen(rd());                      // Pseudorandom number generator
-  std::uniform_int_distribution<> dist(0, 19); // scale [0, 19]
+  // std::random_device rd;                       // ramdom seed
+  // std::mt19937 gen(rd());                      // Pseudorandom number generator
+  // std::uniform_int_distribution<> dist(0, 19); // scale [0, 19]
 
-  int random_number = dist(gen);
-  if (random_number % 4 == 0) {
-    os << "#define vxrm 0\n";
-  } else if (random_number % 4 == 1) {
-    os << "#define vxrm 1\n";
-  } else if (random_number % 4 == 2) {
-    os << "#define vxrm 2\n";
-  } else if (random_number % 4 == 3) {
-    os << "#define vxrm 3\n";
-  } else {
-    os << "#define frm 4\n";
-  }
-  if (random_number % 5 == 0) {
-    os << "#define frm 0\n";
-  } else if (random_number % 5 == 1) {
-    os << "#define frm 1\n";
-  } else if (random_number % 5 == 2) {
-    os << "#define frm 2\n";
-  } else if (random_number % 5 == 3) {
-    os << "#define frm 3\n";
-  } else {
-    os << "#define frm 4\n";
-  }
+  // can't find how to pass this number to rif
+  // int random_number = dist(gen);
+  // if (random_number % 4 == 0) {
+  //   os << "#define vxrm 0\n";
+  // } else if (random_number % 4 == 1) {
+  //   os << "#define vxrm 1\n";
+  // } else if (random_number % 4 == 2) {
+  //   os << "#define vxrm 2\n";
+  // } else if (random_number % 4 == 3) {
+  //   os << "#define vxrm 3\n";
+  // } else {
+  //   os << "#define frm 4\n";
+  // }
+  // if (random_number % 5 == 0) {
+  //   os << "#define frm 0\n";
+  // } else if (random_number % 5 == 1) {
+  //   os << "#define frm 1\n";
+  // } else if (random_number % 5 == 2) {
+  //   os << "#define frm 2\n";
+  // } else if (random_number % 5 == 3) {
+  //   os << "#define frm 3\n";
+  // } else {
+  //   os << "#define frm 4\n";
+  // }
 }
 
 void Graph::generateData(uint32_t seed) {
