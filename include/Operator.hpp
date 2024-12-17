@@ -22,7 +22,7 @@ struct InitializeOp : OperatorBase {
 };
 
 #define CUSTOM_OP_TYPE(OP_TYPE, OP_ID, SEW, TYPE_CLASS, OP_ATTR, OUTPUT_TYPE,  \
-                       NUM_OF_INPUTS, ...)                                     \
+                       NUM_OF_INPUTS, INPUT_NFIELD, OUTPUT_FIELD, ...)         \
   struct OP_TYPE##Op : OperatorBase {                                          \
     OP_TYPE##Op(const std::string &id, LmulType lmul)                          \
         : OperatorBase(CustomValType::OP_TYPE, "v" #OP_ID, id, OP_ATTR,        \

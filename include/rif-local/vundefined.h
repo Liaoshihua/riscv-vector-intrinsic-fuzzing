@@ -1,0 +1,2 @@
+// The vundefined intrinsics are placeholders to represent unspecified values in variable initialization,
+// or as arguments of vset and vcreate. These pseudo intrinsics are not mapped to any instruction.

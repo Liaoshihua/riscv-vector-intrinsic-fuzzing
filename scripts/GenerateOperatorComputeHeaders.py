@@ -9,7 +9,8 @@ from VVMLiteral import *
 from VXMLiteral import *
 from MiscMaskLiteral import *
 from HeaderLiteral import *
-
+from MiscellaneousLiteral import *
+from SegLSLiteral import *
 import sys
 
 sys.path = [os.path.abspath(os.path.join(os.path.dirname(__file__)))] + sys.path
@@ -46,6 +47,10 @@ def parseCustomOperatorDefinitions(filename) :
         code_gen_func = create_masked_no_maskedoff_vx_op
       else :
         code_gen_func = create_vx_op
+    elif "Miscellaneous" in op_attr :
+      code_gen_func = create_temp_op
+    elif "SegLoadOperation" in op_attr or "SegStoreOperation" in op_attr:
+      code_gen_func = create_temp2_op
     elif op_id[-2:] == "vv" or op_id[-2:] == "wv" or op_id[-2:] == "mm":
       if "MulAddOperation" in op_attr :
         code_gen_func = create_destructive_vv_op
